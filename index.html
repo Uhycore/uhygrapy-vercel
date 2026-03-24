@@ -282,6 +282,166 @@
             animation: heroIn .6s .4s var(--ease-out) forwards
         }
 
+        /* ─── MUSIC PLAYER ─── */
+        .music-player {
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .45rem .5rem .45rem .9rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all .3s var(--ease-smooth);
+            user-select: none;
+            margin-top: 1.25rem;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: heroIn .6s .55s var(--ease-out) forwards;
+        }
+
+        .music-player:hover {
+            border-color: var(--border-h);
+            background: var(--bg-el);
+        }
+
+        .music-player.playing {
+            border-color: var(--accent-border);
+            background: var(--accent-dim);
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+            gap: .05rem;
+            min-width: 0;
+        }
+
+        .music-title {
+            font-family: var(--font-d);
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+            line-height: 1.2;
+        }
+
+        .music-status {
+            font-size: .6rem;
+            color: var(--text-4);
+            letter-spacing: .03em;
+            transition: color .3s;
+        }
+
+        .music-player.playing .music-status {
+            color: var(--accent);
+        }
+
+        /* Equalizer bars */
+        .eq-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 16px;
+            margin-right: .1rem;
+        }
+
+        .eq-bar {
+            width: 3px;
+            background: var(--text-4);
+            border-radius: 1.5px;
+            transition: background .3s;
+        }
+
+        .eq-bar:nth-child(1) {
+            height: 6px;
+        }
+
+        .eq-bar:nth-child(2) {
+            height: 12px;
+        }
+
+        .eq-bar:nth-child(3) {
+            height: 8px;
+        }
+
+        .eq-bar:nth-child(4) {
+            height: 14px;
+        }
+
+        .eq-bar:nth-child(5) {
+            height: 10px;
+        }
+
+        .music-player.playing .eq-bar {
+            background: var(--accent);
+            animation: eqBounce .8s ease-in-out infinite alternate;
+        }
+
+        .music-player.playing .eq-bar:nth-child(1) {
+            animation-duration: .7s;
+        }
+
+        .music-player.playing .eq-bar:nth-child(2) {
+            animation-duration: .5s;
+            animation-delay: .1s;
+        }
+
+        .music-player.playing .eq-bar:nth-child(3) {
+            animation-duration: .65s;
+            animation-delay: .05s;
+        }
+
+        .music-player.playing .eq-bar:nth-child(4) {
+            animation-duration: .55s;
+            animation-delay: .15s;
+        }
+
+        .music-player.playing .eq-bar:nth-child(5) {
+            animation-duration: .75s;
+            animation-delay: .08s;
+        }
+
+        @keyframes eqBounce {
+            0% {
+                height: 4px;
+            }
+
+            100% {
+                height: 16px;
+            }
+        }
+
+        .music-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-el);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-2);
+            font-size: .7rem;
+            flex-shrink: 0;
+            transition: all .25s;
+        }
+
+        .music-player:hover .music-btn {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border-color: var(--accent-border);
+        }
+
+        .music-player.playing .music-btn {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
         /* ─── FILTER PILLS ─── */
         .gallery-controls {
             max-width: 1200px;
@@ -734,6 +894,24 @@
         <h1>Karya Saya</h1>
         <p>Koleksi fotografi street, dokumentasi, dan travel. Setiap frame menyimpan cerita dan momen yang tak terulang.
         </p>
+
+        <!-- MUSIC PLAYER -->
+        <div class="music-player" id="musicPlayer" onclick="toggleMusic()">
+            <div class="eq-bars">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+            <div class="music-info">
+                <span class="music-title">Background Music</span>
+                <span class="music-status" id="musicStatusText">Klik untuk putar</span>
+            </div>
+            <div class="music-btn" id="musicBtnIcon">
+                <i class="fas fa-play"></i>
+            </div>
+        </div>
     </div>
 
     <!-- FILTER & COUNT -->
@@ -744,7 +922,7 @@
             <button class="filter-pill" data-filter="dokumentasi">Dokumentasi</button>
         </div>
         <div class="gallery-count">
-            <span class="count-num" id="countNum">7</span> karya
+            <span class="count-num" id="countNum">9</span> karya
         </div>
     </div>
 
@@ -775,6 +953,14 @@
                     <h3>Street Photography</h3>
                 </div>
             </div>
+            <div class="gallery-item" data-cat="street">
+                <img src="images/foto7.jpg" alt="Street Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Street</div>
+                    <h3>Street Photography</h3>
+                </div>
+            </div>
             <div class="gallery-item" data-cat="dokumentasi">
                 <img src="images/foto5.jpg" alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
@@ -799,12 +985,20 @@
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
-            <div class="gallery-item" data-cat="street">
-                <img src="images/foto7.jpg" alt="Street Photography" loading="lazy">
+            <div class="gallery-item" data-cat="dokumentasi">
+                <img src="images/foto8.jpg" alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Street</div>
-                    <h3>Street Photography</h3>
+                    <div class="cat">Dokumentasi</div>
+                    <h3>Fotografi Dokumentasi</h3>
+                </div>
+            </div>
+            <div class="gallery-item" data-cat="dokumentasi">
+                <img src="images/foto9.jpg" alt="Fotografi Dokumentasi" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Dokumentasi</div>
+                    <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
         </div>
@@ -930,6 +1124,42 @@
                 lightbox.classList.remove('open');
                 document.body.style.overflow = '';
             }
+        });
+
+        // ── Music Player ──
+        const audio = new Audio('music/music.mp3');
+        audio.loop = true;
+        audio.volume = 0.5;
+
+        const playerEl = document.getElementById('musicPlayer');
+        const statusText = document.getElementById('musicStatusText');
+        const btnIcon = document.getElementById('musicBtnIcon');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                playerEl.classList.remove('playing');
+                btnIcon.innerHTML = '<i class="fas fa-play"></i>';
+                statusText.textContent = 'Dijeda';
+                isPlaying = false;
+            } else {
+                audio.play().then(() => {
+                    playerEl.classList.add('playing');
+                    btnIcon.innerHTML = '<i class="fas fa-pause"></i>';
+                    statusText.textContent = 'Sedang diputar';
+                    isPlaying = true;
+                }).catch(() => {
+                    statusText.textContent = 'Klik sekali lagi';
+                });
+            }
+        }
+
+        audio.addEventListener('ended', () => {
+            playerEl.classList.remove('playing');
+            btnIcon.innerHTML = '<i class="fas fa-play"></i>';
+            statusText.textContent = 'Selesai';
+            isPlaying = false;
         });
 
         // ── Page load ──
