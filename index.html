@@ -302,19 +302,19 @@
 
         .music-player:hover {
             border-color: var(--border-h);
-            background: var(--bg-el);
+            background: var(--bg-el)
         }
 
         .music-player.playing {
             border-color: var(--accent-border);
-            background: var(--accent-dim);
+            background: var(--accent-dim)
         }
 
         .music-info {
             display: flex;
             flex-direction: column;
             gap: .05rem;
-            min-width: 0;
+            min-width: 0
         }
 
         .music-title {
@@ -326,92 +326,91 @@
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 120px;
-            line-height: 1.2;
+            line-height: 1.2
         }
 
         .music-status {
             font-size: .6rem;
             color: var(--text-4);
             letter-spacing: .03em;
-            transition: color .3s;
+            transition: color .3s
         }
 
         .music-player.playing .music-status {
-            color: var(--accent);
+            color: var(--accent)
         }
 
-        /* Equalizer bars */
         .eq-bars {
             display: flex;
             align-items: flex-end;
             gap: 2px;
             height: 16px;
-            margin-right: .1rem;
+            margin-right: .1rem
         }
 
         .eq-bar {
             width: 3px;
             background: var(--text-4);
             border-radius: 1.5px;
-            transition: background .3s;
+            transition: background .3s
         }
 
         .eq-bar:nth-child(1) {
-            height: 6px;
+            height: 6px
         }
 
         .eq-bar:nth-child(2) {
-            height: 12px;
+            height: 12px
         }
 
         .eq-bar:nth-child(3) {
-            height: 8px;
+            height: 8px
         }
 
         .eq-bar:nth-child(4) {
-            height: 14px;
+            height: 14px
         }
 
         .eq-bar:nth-child(5) {
-            height: 10px;
+            height: 10px
         }
 
         .music-player.playing .eq-bar {
             background: var(--accent);
-            animation: eqBounce .8s ease-in-out infinite alternate;
+            animation: eqBounce .8s ease-in-out infinite alternate
         }
 
         .music-player.playing .eq-bar:nth-child(1) {
-            animation-duration: .7s;
+            animation-duration: .7s
         }
 
         .music-player.playing .eq-bar:nth-child(2) {
             animation-duration: .5s;
-            animation-delay: .1s;
+            animation-delay: .1s
         }
 
         .music-player.playing .eq-bar:nth-child(3) {
             animation-duration: .65s;
-            animation-delay: .05s;
+            animation-delay: .05s
         }
 
         .music-player.playing .eq-bar:nth-child(4) {
             animation-duration: .55s;
-            animation-delay: .15s;
+            animation-delay: .15s
         }
 
         .music-player.playing .eq-bar:nth-child(5) {
             animation-duration: .75s;
-            animation-delay: .08s;
+            animation-delay: .08s
         }
 
         @keyframes eqBounce {
             0% {
-                height: 4px;
+                height: 4px
             }
 
             100% {
-                height: 16px;
+                height: 16px
             }
         }
 
@@ -427,19 +426,19 @@
             color: var(--text-2);
             font-size: .7rem;
             flex-shrink: 0;
-            transition: all .25s;
+            transition: all .25s
         }
 
         .music-player:hover .music-btn {
             background: var(--accent-dim);
             color: var(--accent);
-            border-color: var(--accent-border);
+            border-color: var(--accent-border)
         }
 
         .music-player.playing .music-btn {
             background: var(--accent);
             color: var(--bg);
-            border-color: var(--accent);
+            border-color: var(--accent)
         }
 
         /* ─── FILTER PILLS ─── */
@@ -504,31 +503,16 @@
             color: var(--text-3)
         }
 
-        /* ─── BENTO GALLERY ─── */
+        /* ─── MASONRY GALLERY ─── */
         .gallery {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem 6rem
         }
 
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-auto-rows: 220px;
-            gap: .75rem
-        }
-
-        .bento-grid .gallery-item:nth-child(1) {
-            grid-column: span 2;
-            grid-row: span 2
-        }
-
-        .bento-grid .gallery-item:nth-child(4) {
-            grid-column: span 2
-        }
-
-        .bento-grid .gallery-item:nth-child(6) {
-            grid-column: span 2
+        .masonry-grid {
+            columns: 3;
+            column-gap: .75rem;
         }
 
         .gallery-item {
@@ -536,13 +520,16 @@
             overflow: hidden;
             border-radius: 12px;
             cursor: pointer;
+            break-inside: avoid;
+            margin-bottom: .75rem;
+            display: block;
             opacity: 0;
-            transform: translateY(20px) scale(.98)
+            transform: translateY(20px);
         }
 
         .gallery-item.visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
             transition: opacity .5s var(--ease-out), transform .6s var(--ease-out)
         }
 
@@ -551,31 +538,31 @@
             transform: scale(.95);
             transition: all .3s var(--ease-smooth);
             pointer-events: none;
-            position: absolute;
-            visibility: hidden
         }
 
         .gallery-item img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform .6s var(--ease-out), filter .4s var(--ease-smooth)
+            height: auto;
+            /* ← natural aspect ratio, no crop */
+            display: block;
+            border-radius: 12px;
+            transition: filter .4s var(--ease-smooth)
         }
 
         .gallery-item:hover img {
-            transform: scale(1.06);
-            filter: brightness(.55)
+            filter: brightness(.5)
         }
 
         .gallery-item .overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, transparent 30%, rgba(10, 10, 11, .92) 100%);
+            background: linear-gradient(180deg, transparent 40%, rgba(10, 10, 11, .92) 100%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             padding: 1.5rem;
             opacity: 0;
+            border-radius: 12px;
             transition: opacity .35s var(--ease-smooth)
         }
 
@@ -772,27 +759,13 @@
         }
 
         /* ─── RESPONSIVE ─── */
-        @media(max-width:900px) {
-            .bento-grid {
-                grid-template-columns: repeat(2, 1fr);
-                grid-auto-rows: 180px
-            }
-
-            .bento-grid .gallery-item:nth-child(1) {
-                grid-column: span 2;
-                grid-row: span 1
-            }
-
-            .bento-grid .gallery-item:nth-child(4) {
-                grid-column: span 1
-            }
-
-            .bento-grid .gallery-item:nth-child(6) {
-                grid-column: span 1
+        @media(max-width: 900px) {
+            .masonry-grid {
+                columns: 2
             }
         }
 
-        @media(max-width:768px) {
+        @media(max-width: 768px) {
             .nav-links {
                 display: none
             }
@@ -821,14 +794,13 @@
                 padding: 0 1.25rem 4rem
             }
 
-            .bento-grid {
-                grid-template-columns: 1fr 1fr;
-                grid-auto-rows: 160px;
-                gap: .5rem
+            .masonry-grid {
+                columns: 2;
+                column-gap: .5rem
             }
 
-            .bento-grid .gallery-item:nth-child(1) {
-                grid-column: span 2
+            .gallery-item {
+                margin-bottom: .5rem
             }
 
             .overlay h3 {
@@ -845,9 +817,9 @@
             }
         }
 
-        @media(max-width:480px) {
-            .bento-grid {
-                grid-auto-rows: 140px
+        @media(max-width: 480px) {
+            .masonry-grid {
+                columns: 1
             }
         }
     </style>
@@ -920,47 +892,27 @@
             <button class="filter-pill active" data-filter="all">Semua</button>
             <button class="filter-pill" data-filter="street">Street</button>
             <button class="filter-pill" data-filter="dokumentasi">Dokumentasi</button>
+            <button class="filter-pill" data-filter="cosplay">Cosplay</button>
+            <button class="filter-pill" data-filter="wedding">Wedding</button>
         </div>
         <div class="gallery-count">
-            <span class="count-num" id="countNum">9</span> karya
+            <span class="count-num" id="countNum">13</span> karya
         </div>
     </div>
 
     <!-- GALLERY -->
     <section class="gallery">
-        <div class="bento-grid" id="bentoGrid">
-            <div class="gallery-item" data-cat="street">
-                <img src="images/foto1.jpg" alt="Street Photography" loading="lazy">
+        <div class="masonry-grid" id="masonryGrid">
+
+            <div class="gallery-item" data-cat="dokumentasi">
+                <img src="images/foto7.jpg" alt="Penandatanganan Pakta Integritas" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Street</div>
-                    <h3>Street Photography</h3>
+                    <div class="cat">Dokumentasi</div>
+                    <h3>Penandatanganan Pakta Integritas</h3>
                 </div>
             </div>
-            <div class="gallery-item" data-cat="street">
-                <img src="images/foto3.jpg" alt="Street Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Street</div>
-                    <h3>Street Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="street">
-                <img src="images/foto4.jpg" alt="Street Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Street</div>
-                    <h3>Street Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="street">
-                <img src="images/foto7.jpg" alt="Street Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Street</div>
-                    <h3>Street Photography</h3>
-                </div>
-            </div>
+
             <div class="gallery-item" data-cat="dokumentasi">
                 <img src="images/foto5.jpg" alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
@@ -969,6 +921,7 @@
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
+
             <div class="gallery-item" data-cat="dokumentasi">
                 <img src="images/foto6.jpg" alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
@@ -977,6 +930,7 @@
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
+
             <div class="gallery-item" data-cat="dokumentasi">
                 <img src="images/foto2.jpg" alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
@@ -985,6 +939,7 @@
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
+
             <div class="gallery-item" data-cat="dokumentasi">
                 <img src="images/foto8.jpg" alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
@@ -993,14 +948,79 @@
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
-            <div class="gallery-item" data-cat="dokumentasi">
-                <img src="images/foto9.jpg" alt="Fotografi Dokumentasi" loading="lazy">
+
+            <div class="gallery-item" data-cat="cosplay">
+                <img src="images/foto9.jpg" alt="Cosplay Photography" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Dokumentasi</div>
-                    <h3>Fotografi Dokumentasi</h3>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
                 </div>
             </div>
+
+            <div class="gallery-item" data-cat="wedding">
+                <img src="images/foto10.jpg" alt="Wedding Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-cat="cosplay">
+                <img src="images/foto11.jpg" alt="Cosplay Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-cat="cosplay">
+                <img src="images/foto12.jpg" alt="Cosplay Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-cat="cosplay">
+                <img src="images/foto13.jpg" alt="Cosplay Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-cat="street">
+                <img src="images/foto14.jpg" alt="Street Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-cat="cosplay">
+                <img src="images/foto15.jpg" alt="Cosplay Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-cat="cosplay">
+                <img src="images/foto16.jpg" alt="Cosplay Photography" loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -1050,7 +1070,7 @@
             });
         });
 
-        // ── Scroll Reveal (Intersection Observer) ──
+        // ── Scroll Reveal ──
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
                 if (entry.isIntersecting) {
@@ -1058,13 +1078,13 @@
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
 
         document.querySelectorAll('.gallery-item').forEach(el => observer.observe(el));
 
         // ── Filter ──
         const pills = document.querySelectorAll('.filter-pill');
-        const grid = document.getElementById('bentoGrid');
+        const grid = document.getElementById('masonryGrid');
         const countNum = document.getElementById('countNum');
 
         pills.forEach(pill => {
@@ -1077,9 +1097,10 @@
 
                 items.forEach(item => {
                     if (filter === 'all' || item.dataset.cat === filter) {
-                        item.classList.remove('hiding');
-                        item.classList.add('visible');
                         item.style.display = '';
+                        item.classList.remove('hiding');
+                        // re-trigger observer for newly shown items
+                        setTimeout(() => item.classList.add('visible'), 50);
                         count++;
                     } else {
                         item.classList.add('hiding');
