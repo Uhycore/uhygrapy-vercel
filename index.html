@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark")</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karya — Uhygrapy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -36,7 +37,7 @@
             --font-d: 'Sora', sans-serif;
             --font-b: 'Outfit', sans-serif;
             --ease-out: cubic-bezier(.16, 1, .3, 1);
-            --ease-smooth: cubic-bezier(.4, 0, .2, 1);
+            --ease-smooth: cubic-bezier(.4, 0, .2, 1)
         }
 
         html {
@@ -51,7 +52,6 @@
             overflow-x: hidden
         }
 
-        /* ─── PAGE TRANSITION ─── */
         .page-transition {
             position: fixed;
             inset: 0;
@@ -67,7 +67,6 @@
             pointer-events: all
         }
 
-        /* ─── GRAIN OVERLAY ─── */
         .grain {
             position: fixed;
             inset: 0;
@@ -77,7 +76,6 @@
             mix-blend-mode: overlay
         }
 
-        /* ─── SCROLLBAR ─── */
         ::-webkit-scrollbar {
             width: 4px
         }
@@ -91,7 +89,6 @@
             border-radius: 2px
         }
 
-        /* ─── NAV ─── */
         .nav {
             position: fixed;
             top: 0;
@@ -153,7 +150,7 @@
 
         .nav-links a.active {
             color: var(--text);
-            background: var(--accent-dim);
+            background: var(--accent-dim)
         }
 
         .nav-links a.active::after {
@@ -168,7 +165,6 @@
             border-radius: 1px
         }
 
-        /* Hamburger */
         .hamburger {
             display: none;
             flex-direction: column;
@@ -240,7 +236,6 @@
             color: var(--accent)
         }
 
-        /* ─── HERO ─── */
         .page-hero {
             padding: 9rem 2rem 2.5rem;
             max-width: 1200px;
@@ -282,7 +277,6 @@
             animation: heroIn .6s .4s var(--ease-out) forwards
         }
 
-        /* ─── MUSIC PLAYER ─── */
         .music-player {
             display: inline-flex;
             align-items: center;
@@ -297,7 +291,7 @@
             margin-top: 1.25rem;
             opacity: 0;
             transform: translateY(12px);
-            animation: heroIn .6s .55s var(--ease-out) forwards;
+            animation: heroIn .6s .55s var(--ease-out) forwards
         }
 
         .music-player:hover {
@@ -441,7 +435,6 @@
             border-color: var(--accent)
         }
 
-        /* ─── FILTER PILLS ─── */
         .gallery-controls {
             max-width: 1200px;
             margin: 0 auto;
@@ -503,7 +496,6 @@
             color: var(--text-3)
         }
 
-        /* ─── MASONRY GALLERY ─── */
         .gallery {
             max-width: 1200px;
             margin: 0 auto;
@@ -512,7 +504,7 @@
 
         .masonry-grid {
             columns: 3;
-            column-gap: .75rem;
+            column-gap: .75rem
         }
 
         .gallery-item {
@@ -524,7 +516,7 @@
             margin-bottom: .75rem;
             display: block;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(20px)
         }
 
         .gallery-item.visible {
@@ -537,13 +529,12 @@
             opacity: 0;
             transform: scale(.95);
             transition: all .3s var(--ease-smooth);
-            pointer-events: none;
+            pointer-events: none
         }
 
         .gallery-item img {
             width: 100%;
             height: auto;
-            /* ← natural aspect ratio, no crop */
             display: block;
             border-radius: 12px;
             transition: filter .4s var(--ease-smooth)
@@ -625,7 +616,6 @@
             opacity: 1
         }
 
-        /* ─── LIGHTBOX ─── */
         .lightbox {
             position: fixed;
             inset: 0;
@@ -706,7 +696,6 @@
             margin-top: .2rem
         }
 
-        /* ─── FOOTER ─── */
         .footer {
             border-top: 1px solid var(--border);
             padding: 3rem 2rem
@@ -758,14 +747,13 @@
             }
         }
 
-        /* ─── RESPONSIVE ─── */
-        @media(max-width: 900px) {
+        @media(max-width:900px) {
             .masonry-grid {
                 columns: 2
             }
         }
 
-        @media(max-width: 768px) {
+        @media(max-width:768px) {
             .nav-links {
                 display: none
             }
@@ -817,57 +805,179 @@
             }
         }
 
-        @media(max-width: 480px) {
+        @media(max-width:480px) {
             .masonry-grid {
                 columns: 1
             }
+        }
+
+        /* ── THEME TOGGLE ── */
+        .theme-toggle {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--bg-el);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-3);
+            font-size: .8rem;
+            cursor: pointer;
+            transition: all .25s var(--ease-smooth);
+            flex-shrink: 0
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--border-h);
+            color: var(--text)
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            flex-shrink: 0
+        }
+
+        /* ── LIGHT MODE ── */
+        [data-theme="light"] {
+            --bg: #f4f4f5;
+            --bg-card: #ffffff;
+            --bg-el: #e4e4e7;
+            --text: #111113;
+            --text-2: #3f3f46;
+            --text-3: #71717a;
+            --text-4: #a1a1aa;
+            --accent: #c8ff00;
+            --accent-dim: rgba(150, 210, 0, .1);
+            --accent-border: rgba(80, 130, 0, .22);
+            --border: rgba(0, 0, 0, .08);
+            --border-h: rgba(0, 0, 0, .16)
+        }
+
+        [data-theme="light"] .nav {
+            background: rgba(244, 244, 245, .9)
+        }
+
+        [data-theme="light"] .mobile-menu {
+            background: rgba(244, 244, 245, .97)
+        }
+
+        [data-theme="light"] .grain {
+            opacity: .012
+        }
+
+        [data-theme="light"] .nav-logo span,
+        [data-theme="light"] .page-hero .label,
+        [data-theme="light"] .gear-badge,
+        [data-theme="light"] .spec-icon,
+        [data-theme="light"] .feat-check,
+        [data-theme="light"] .card-type.lime,
+        [data-theme="light"] .card-tag.lime,
+        [data-theme="light"] .note-num,
+        [data-theme="light"] .notes-head-icon,
+        [data-theme="light"] .notes-head-text .notes-label,
+        [data-theme="light"] .notes-label,
+        [data-theme="light"] .cta-hint i,
+        [data-theme="light"] .trust-item i,
+        [data-theme="light"] .music-player.playing .music-status,
+        [data-theme="light"] .overlay .cat,
+        [data-theme="light"] .lightbox-info .cat,
+        [data-theme="light"] .ci-icon.lime,
+        [data-theme="light"] .form-card h3 i,
+        [data-theme="light"] .info-card h3 i,
+        [data-theme="light"] .why-icon,
+        [data-theme="light"] .why-content .why-label,
+        [data-theme="light"] .music-player .music-btn {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .nav-links a.active::after {
+            background: #4a7900
+        }
+
+        [data-theme="light"] .mobile-menu a.active {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .music-player.playing .eq-bar {
+            background: #4a7900
+        }
+
+        [data-theme="light"] .limited-dot {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .limited-dot::before {
+            background: #4a7900
+        }
+
+        [data-theme="light"] .filter-pill.active,
+        [data-theme="light"] .music-player.playing .music-btn,
+        [data-theme="light"] .card-cta.solid,
+        [data-theme="light"] .form-submit {
+            color: #111113
+        }
+
+        [data-theme="light"] .float-group input:focus~label,
+        [data-theme="light"] .float-group input:not(:placeholder-shown)~label,
+        [data-theme="light"] .float-group textarea:focus~label,
+        [data-theme="light"] .float-group textarea:not(:placeholder-shown)~label {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .card-cta.outline {
+            border-color: rgba(80, 130, 0, .3)
+        }
+
+        [data-theme="light"] .card-cta.outline:hover {
+            background: rgba(150, 210, 0, .08);
+            border-color: rgba(80, 130, 0, .5);
+            color: #111113
+        }
+
+        [data-theme="light"] .nav-links a.active {
+            background: rgba(150, 210, 0, .15)
         }
     </style>
 </head>
 
 <body>
-
-    <!-- PAGE TRANSITION -->
     <div class="page-transition" id="pageTransition"></div>
-
-    <!-- GRAIN -->
     <svg class="grain" width="100%" height="100%">
         <filter id="g">
             <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="4" stitchTiles="stitch" />
         </filter>
         <rect width="100%" height="100%" filter="url(#g)" />
     </svg>
-
-    <!-- NAV -->
     <nav class="nav">
         <div class="nav-inner">
-            <a href="index.html" class="nav-logo">Uhy<span>grapy</span></a>
+            <div class="nav-left">
+                <a href="index.html" class="nav-logo">Uhy<span>grapy</span></a>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle tema"><i id="themeIcon"
+                        class="fas fa-sun"></i></button>
+            </div>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Karya</a></li>
                 <li><a href="gear.html">Peralatan</a></li>
+                <li><a href="price.html">Harga</a></li>
                 <li><a href="contact.html">Kontak</a></li>
             </ul>
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
         </div>
     </nav>
-
-    <!-- MOBILE MENU -->
     <div class="mobile-menu" id="mobileMenu">
         <a href="index.html" class="active">Karya</a>
         <a href="gear.html">Peralatan</a>
+        <a href="price.html">Harga</a>
         <a href="contact.html">Kontak</a>
     </div>
-
-    <!-- HERO -->
     <div class="page-hero">
         <div class="label">Portfolio Fotografi</div>
         <h1>Karya Saya</h1>
-        <p>Koleksi fotografi street, dokumentasi, dan travel. Setiap frame menyimpan cerita dan momen yang tak terulang.
+        <p>Koleksi fotografi dokumentasi, dan travel. Setiap frame menyimpan cerita dan momen yang tak terulang.
         </p>
-
-        <!-- MUSIC PLAYER -->
         <div class="music-player" id="musicPlayer" onclick="toggleMusic()">
             <div class="eq-bars">
                 <div class="eq-bar"></div>
@@ -876,155 +986,176 @@
                 <div class="eq-bar"></div>
                 <div class="eq-bar"></div>
             </div>
-            <div class="music-info">
-                <span class="music-title">Background Music</span>
-                <span class="music-status" id="musicStatusText">Klik untuk putar</span>
-            </div>
-            <div class="music-btn" id="musicBtnIcon">
-                <i class="fas fa-play"></i>
-            </div>
+            <div class="music-info"><span class="music-title">Background Music</span><span class="music-status"
+                    id="musicStatusText">Klik untuk putar</span></div>
+            <div class="music-btn" id="musicBtnIcon"><i class="fas fa-play"></i></div>
         </div>
     </div>
-
-    <!-- FILTER & COUNT -->
     <div class="gallery-controls">
         <div class="filter-pills">
             <button class="filter-pill active" data-filter="all">Semua</button>
-            <button class="filter-pill" data-filter="street">Street</button>
             <button class="filter-pill" data-filter="dokumentasi">Dokumentasi</button>
             <button class="filter-pill" data-filter="cosplay">Cosplay</button>
             <button class="filter-pill" data-filter="wedding">Wedding</button>
         </div>
-        <div class="gallery-count">
-            <span class="count-num" id="countNum">13</span> karya
-        </div>
+        <div class="gallery-count"><span class="count-num" id="countNum">13</span> karya</div>
     </div>
-
-    <!-- GALLERY -->
     <section class="gallery">
         <div class="masonry-grid" id="masonryGrid">
-
-            <div class="gallery-item" data-cat="dokumentasi">
-                <img src="images/foto7.jpg" alt="Penandatanganan Pakta Integritas" loading="lazy">
+            <div class="gallery-item" data-cat="dokumentasi"><img src="images/foto_dokumentasi1.jpg"
+                    alt="Penandatanganan Pakta Integritas" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Dokumentasi</div>
                     <h3>Penandatanganan Pakta Integritas</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="dokumentasi">
-                <img src="images/foto5.jpg" alt="Fotografi Dokumentasi" loading="lazy">
+            <div class="gallery-item" data-cat="dokumentasi"><img src="images/foto_dokumentasi2.jpg"
+                    alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Dokumentasi</div>
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="dokumentasi">
-                <img src="images/foto6.jpg" alt="Fotografi Dokumentasi" loading="lazy">
+            <div class="gallery-item" data-cat="dokumentasi"><img src="images/foto_dokumentasi3.jpg"
+                    alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Dokumentasi</div>
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="dokumentasi">
-                <img src="images/foto2.jpg" alt="Fotografi Dokumentasi" loading="lazy">
+            <div class="gallery-item" data-cat="dokumentasi"><img src="images/foto_dokumentasi4.jpg"
+                    alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Dokumentasi</div>
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="dokumentasi">
-                <img src="images/foto8.jpg" alt="Fotografi Dokumentasi" loading="lazy">
+            <div class="gallery-item" data-cat="dokumentasi"><img src="images/foto_dokumentasi5.jpg"
+                    alt="Fotografi Dokumentasi" loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Dokumentasi</div>
                     <h3>Fotografi Dokumentasi</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="cosplay">
-                <img src="images/foto9.jpg" alt="Cosplay Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer1.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="wedding">
-                <img src="images/foto10.jpg" alt="Wedding Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer2.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="cosplay">
-                <img src="images/foto11.jpg" alt="Cosplay Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer3.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="cosplay">
-                <img src="images/foto12.jpg" alt="Cosplay Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer4.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="cosplay">
-                <img src="images/foto13.jpg" alt="Cosplay Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer5.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="street">
-                <img src="images/foto14.jpg" alt="Street Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer6.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="cosplay">
-                <img src="images/foto15.jpg" alt="Cosplay Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer7.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
-            <div class="gallery-item" data-cat="cosplay">
-                <img src="images/foto16.jpg" alt="Cosplay Photography" loading="lazy">
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer8.jpg" alt="Cosplay Photography"
+                    loading="lazy">
                 <div class="overlay">
                     <div class="view-icon"><i class="fas fa-expand"></i></div>
                     <div class="cat">Cosplay</div>
                     <h3>Cosplay Photography</h3>
                 </div>
             </div>
-
+            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer9.jpg" alt="Cosplay Photography"
+                    loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Cosplay</div>
+                    <h3>Cosplay Photography</h3>
+                </div>
+            </div>
+            <div class="gallery-item" data-cat="wisuda"><img src="images/foto_wisudah1.jpg" alt="Wisuda Photography"
+                    loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Wisuda</div>
+                    <h3>Wisuda Photography</h3>
+                </div>
+            </div>
+            <div class="gallery-item" data-cat="wisuda"><img src="images/foto_wisudah2.jpg" alt="Wisuda Photography"
+                    loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Wisuda</div>
+                    <h3>Wisuda Photography</h3>
+                </div>
+            </div>
+            <div class="gallery-item" data-cat="wisuda"><img src="images/foto_wisudah3.jpg" alt="Wisuda Photography"
+                    loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Wisuda</div>
+                    <h3>Wisuda Photography</h3>
+                </div>
+            </div>
+            <div class="gallery-item" data-cat="wisuda"><img src="images/foto_wisudah4.jpg" alt="Wisuda Photography"
+                    loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Wisuda</div>
+                    <h3>Wisuda Photography</h3>
+                </div>
+            </div>
+            <!-- <div class="gallery-item" data-cat="wedding"><img src="images/foto_cosplayer9.jpg" alt="Wedding Photography"
+                    loading="lazy">
+                <div class="overlay">
+                    <div class="view-icon"><i class="fas fa-expand"></i></div>
+                    <div class="cat">Wedding</div>
+                    <h3>Wedding Photography</h3>
+                </div>
+            </div>       -->
         </div>
     </section>
-
-    <!-- LIGHTBOX -->
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" id="lightboxClose"><i class="fas fa-xmark"></i></button>
         <img src="" alt="" id="lightboxImg">
@@ -1033,11 +1164,9 @@
             <h3 id="lightboxTitle"></h3>
         </div>
     </div>
-
-    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-inner">
-            <p>&copy; 2025 Uhygrapy — Street, wedding, wisudah &amp; dokumentasi &amp; travel fotografi</p>
+            <p>&copy; 2025 Uhygrapy —  wedding, wisudah &amp; dokumentasi &amp; travel fotografi</p>
             <div class="footer-socials">
                 <a href="https://instagram.com/uhycore" target="_blank" aria-label="Instagram"><i
                         class="fab fa-instagram"></i></a>
@@ -1046,149 +1175,44 @@
             </div>
         </div>
     </footer>
-
     <script>
-        // ── Hamburger ──
         const hamburger = document.getElementById('hamburger');
         const mobileMenu = document.getElementById('mobileMenu');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('open');
-            mobileMenu.classList.toggle('visible');
-            mobileMenu.classList.toggle('show');
-            document.body.style.overflow = mobileMenu.classList.contains('show') ? 'hidden' : '';
-        });
-
-        // ── Page Transitions ──
-        document.querySelectorAll('a[href$=".html"]').forEach(link => {
-            link.addEventListener('click', e => {
-                const href = link.getAttribute('href');
-                if (href === 'index.html') return;
-                e.preventDefault();
-                const t = document.getElementById('pageTransition');
-                t.classList.add('active');
-                setTimeout(() => window.location.href = href, 350);
-            });
-        });
-
-        // ── Scroll Reveal ──
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => entry.target.classList.add('visible'), i * 60);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
-
+        hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('visible'); mobileMenu.classList.toggle('show'); document.body.style.overflow = mobileMenu.classList.contains('show') ? 'hidden' : ''; });
+        document.querySelectorAll('a[href$=".html"]').forEach(link => { link.addEventListener('click', e => { const href = link.getAttribute('href'); if (href === 'index.html') return; e.preventDefault(); const t = document.getElementById('pageTransition'); t.classList.add('active'); setTimeout(() => window.location.href = href, 350); }); });
+        const observer = new IntersectionObserver((entries) => { entries.forEach((entry, i) => { if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 60); observer.unobserve(entry.target); } }); }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
         document.querySelectorAll('.gallery-item').forEach(el => observer.observe(el));
-
-        // ── Filter ──
         const pills = document.querySelectorAll('.filter-pill');
         const grid = document.getElementById('masonryGrid');
         const countNum = document.getElementById('countNum');
-
-        pills.forEach(pill => {
-            pill.addEventListener('click', () => {
-                pills.forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-                const filter = pill.dataset.filter;
-                const items = grid.querySelectorAll('.gallery-item');
-                let count = 0;
-
-                items.forEach(item => {
-                    if (filter === 'all' || item.dataset.cat === filter) {
-                        item.style.display = '';
-                        item.classList.remove('hiding');
-                        // re-trigger observer for newly shown items
-                        setTimeout(() => item.classList.add('visible'), 50);
-                        count++;
-                    } else {
-                        item.classList.add('hiding');
-                        item.classList.remove('visible');
-                        setTimeout(() => { item.style.display = 'none'; }, 300);
-                    }
-                });
-
-                countNum.textContent = count;
-            });
-        });
-
-        // ── Lightbox ──
+        pills.forEach(pill => { pill.addEventListener('click', () => { pills.forEach(p => p.classList.remove('active')); pill.classList.add('active'); const filter = pill.dataset.filter; const items = grid.querySelectorAll('.gallery-item'); let count = 0; items.forEach(item => { if (filter === 'all' || item.dataset.cat === filter) { item.style.display = ''; item.classList.remove('hiding'); setTimeout(() => item.classList.add('visible'), 50); count++; } else { item.classList.add('hiding'); item.classList.remove('visible'); setTimeout(() => { item.style.display = 'none'; }, 300); } }); countNum.textContent = count; }); });
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxCat = document.getElementById('lightboxCat');
         const lightboxTitle = document.getElementById('lightboxTitle');
+        document.querySelectorAll('.gallery-item').forEach(item => { item.addEventListener('click', () => { const img = item.querySelector('img'); const cat = item.querySelector('.cat'); const title = item.querySelector('h3'); lightboxImg.src = img.src; lightboxCat.textContent = cat.textContent; lightboxTitle.textContent = title.textContent; lightbox.classList.add('open'); document.body.style.overflow = 'hidden'; }); });
+        [lightbox, document.getElementById('lightboxClose')].forEach(el => { el.addEventListener('click', e => { if (e.target === lightboxImg) return; lightbox.classList.remove('open'); document.body.style.overflow = ''; }); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && lightbox.classList.contains('open')) { lightbox.classList.remove('open'); document.body.style.overflow = ''; } });
+        const audio = new Audio('music/music.mp3'); audio.loop = true; audio.volume = 0.5;
+        const playerEl = document.getElementById('musicPlayer'); const statusText = document.getElementById('musicStatusText'); const btnIcon = document.getElementById('musicBtnIcon'); let isPlaying = false;
+        function toggleMusic() { if (isPlaying) { audio.pause(); playerEl.classList.remove('playing'); btnIcon.innerHTML = '<i class="fas fa-play"></i>'; statusText.textContent = 'Dijeda'; isPlaying = false; } else { audio.play().then(() => { playerEl.classList.add('playing'); btnIcon.innerHTML = '<i class="fas fa-pause"></i>'; statusText.textContent = 'Sedang diputar'; isPlaying = true; }).catch(() => { statusText.textContent = 'Klik sekali lagi'; }); } }
+        audio.addEventListener('ended', () => { playerEl.classList.remove('playing'); btnIcon.innerHTML = '<i class="fas fa-play"></i>'; statusText.textContent = 'Selesai'; isPlaying = false; });
+        window.addEventListener('load', () => { document.getElementById('pageTransition').classList.remove('active'); });
 
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const img = item.querySelector('img');
-                const cat = item.querySelector('.cat');
-                const title = item.querySelector('h3');
-                lightboxImg.src = img.src;
-                lightboxCat.textContent = cat.textContent;
-                lightboxTitle.textContent = title.textContent;
-                lightbox.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        [lightbox, document.getElementById('lightboxClose')].forEach(el => {
-            el.addEventListener('click', e => {
-                if (e.target === lightboxImg) return;
-                lightbox.classList.remove('open');
-                document.body.style.overflow = '';
-            });
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && lightbox.classList.contains('open')) {
-                lightbox.classList.remove('open');
-                document.body.style.overflow = '';
-            }
-        });
-
-        // ── Music Player ──
-        const audio = new Audio('music/music.mp3');
-        audio.loop = true;
-        audio.volume = 0.5;
-
-        const playerEl = document.getElementById('musicPlayer');
-        const statusText = document.getElementById('musicStatusText');
-        const btnIcon = document.getElementById('musicBtnIcon');
-        let isPlaying = false;
-
-        function toggleMusic() {
-            if (isPlaying) {
-                audio.pause();
-                playerEl.classList.remove('playing');
-                btnIcon.innerHTML = '<i class="fas fa-play"></i>';
-                statusText.textContent = 'Dijeda';
-                isPlaying = false;
-            } else {
-                audio.play().then(() => {
-                    playerEl.classList.add('playing');
-                    btnIcon.innerHTML = '<i class="fas fa-pause"></i>';
-                    statusText.textContent = 'Sedang diputar';
-                    isPlaying = true;
-                }).catch(() => {
-                    statusText.textContent = 'Klik sekali lagi';
-                });
-            }
+        // ── Theme Toggle ──
+        function updateThemeIcon() {
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
         }
-
-        audio.addEventListener('ended', () => {
-            playerEl.classList.remove('playing');
-            btnIcon.innerHTML = '<i class="fas fa-play"></i>';
-            statusText.textContent = 'Selesai';
-            isPlaying = false;
+        document.getElementById('themeToggle').addEventListener('click', function () {
+            var cur = document.documentElement.getAttribute('data-theme');
+            var next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeIcon();
         });
-
-        // ── Page load ──
-        window.addEventListener('load', () => {
-            document.getElementById('pageTransition').classList.remove('active');
-        });
+        updateThemeIcon();
     </script>
-
 </body>
 
 </html>

@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark")</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kontak — Uhygrapy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -36,7 +37,7 @@
             --font-d: 'Sora', sans-serif;
             --font-b: 'Outfit', sans-serif;
             --ease-out: cubic-bezier(.16, 1, .3, 1);
-            --ease-smooth: cubic-bezier(.4, 0, .2, 1);
+            --ease-smooth: cubic-bezier(.4, 0, .2, 1)
         }
 
         html {
@@ -88,7 +89,6 @@
             border-radius: 2px
         }
 
-        /* ─── NAV ─── */
         .nav {
             position: fixed;
             top: 0;
@@ -232,7 +232,6 @@
             color: var(--accent)
         }
 
-        /* ─── HERO ─── */
         .page-hero {
             padding: 9rem 2rem 2.5rem;
             max-width: 1200px;
@@ -276,7 +275,6 @@
             animation: heroIn .6s .4s var(--ease-out) forwards
         }
 
-        /* ─── CONTACT GRID ─── */
         .contact-section {
             max-width: 1200px;
             margin: 0 auto;
@@ -289,7 +287,6 @@
             gap: 1.25rem
         }
 
-        /* ─── FORM ─── */
         .form-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -321,7 +318,6 @@
             font-size: .85rem
         }
 
-        /* Floating label groups */
         .float-group {
             position: relative;
             margin-bottom: 1.25rem
@@ -399,18 +395,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: .5rem;
-            position: relative;
-            overflow: hidden
+            gap: .5rem
         }
 
         .form-submit:hover {
             box-shadow: 0 8px 28px rgba(200, 255, 0, .2);
             transform: translateY(-2px)
-        }
-
-        .form-submit:active {
-            transform: translateY(0)
         }
 
         .form-hint {
@@ -420,7 +410,6 @@
             margin-top: .75rem
         }
 
-        /* Success state */
         .form-success {
             display: none;
             text-align: center;
@@ -459,7 +448,6 @@
             line-height: 1.6
         }
 
-        /* ─── INFO COLUMN ─── */
         .info-col {
             display: flex;
             flex-direction: column;
@@ -576,7 +564,6 @@
             filter: grayscale(0) brightness(1)
         }
 
-        /* ─── FOOTER ─── */
         .footer {
             border-top: 1px solid var(--border);
             padding: 3rem 2rem
@@ -667,90 +654,202 @@
                 gap: 1rem
             }
         }
+
+        /* ── THEME TOGGLE ── */
+        .theme-toggle {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--bg-el);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-3);
+            font-size: .8rem;
+            cursor: pointer;
+            transition: all .25s var(--ease-smooth);
+            flex-shrink: 0
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--border-h);
+            color: var(--text)
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            flex-shrink: 0
+        }
+
+        /* ── LIGHT MODE ── */
+        [data-theme="light"] {
+            --bg: #f4f4f5;
+            --bg-card: #ffffff;
+            --bg-el: #e4e4e7;
+            --text: #111113;
+            --text-2: #3f3f46;
+            --text-3: #71717a;
+            --text-4: #a1a1aa;
+            --accent: #c8ff00;
+            --accent-dim: rgba(150, 210, 0, .1);
+            --accent-border: rgba(80, 130, 0, .22);
+            --border: rgba(0, 0, 0, .08);
+            --border-h: rgba(0, 0, 0, .16)
+        }
+
+        [data-theme="light"] .nav {
+            background: rgba(244, 244, 245, .9)
+        }
+
+        [data-theme="light"] .mobile-menu {
+            background: rgba(244, 244, 245, .97)
+        }
+
+        [data-theme="light"] .grain {
+            opacity: .012
+        }
+
+        [data-theme="light"] .nav-logo span,
+        [data-theme="light"] .page-hero .label,
+        [data-theme="light"] .gear-badge,
+        [data-theme="light"] .spec-icon,
+        [data-theme="light"] .feat-check,
+        [data-theme="light"] .card-type.lime,
+        [data-theme="light"] .card-tag.lime,
+        [data-theme="light"] .note-num,
+        [data-theme="light"] .notes-head-icon,
+        [data-theme="light"] .notes-head-text .notes-label,
+        [data-theme="light"] .notes-label,
+        [data-theme="light"] .cta-hint i,
+        [data-theme="light"] .trust-item i,
+        [data-theme="light"] .music-player.playing .music-status,
+        [data-theme="light"] .overlay .cat,
+        [data-theme="light"] .lightbox-info .cat,
+        [data-theme="light"] .ci-icon.lime,
+        [data-theme="light"] .form-card h3 i,
+        [data-theme="light"] .info-card h3 i,
+        [data-theme="light"] .why-icon,
+        [data-theme="light"] .why-content .why-label,
+        [data-theme="light"] .music-player .music-btn {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .nav-links a.active::after {
+            background: #4a7900
+        }
+
+        [data-theme="light"] .mobile-menu a.active {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .music-player.playing .eq-bar {
+            background: #4a7900
+        }
+
+        [data-theme="light"] .limited-dot {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .limited-dot::before {
+            background: #4a7900
+        }
+
+        [data-theme="light"] .filter-pill.active,
+        [data-theme="light"] .music-player.playing .music-btn,
+        [data-theme="light"] .card-cta.solid,
+        [data-theme="light"] .form-submit {
+            color: #111113
+        }
+
+        [data-theme="light"] .float-group input:focus~label,
+        [data-theme="light"] .float-group input:not(:placeholder-shown)~label,
+        [data-theme="light"] .float-group textarea:focus~label,
+        [data-theme="light"] .float-group textarea:not(:placeholder-shown)~label {
+            color: #4a7900
+        }
+
+        [data-theme="light"] .card-cta.outline {
+            border-color: rgba(80, 130, 0, .3)
+        }
+
+        [data-theme="light"] .card-cta.outline:hover {
+            background: rgba(150, 210, 0, .08);
+            border-color: rgba(80, 130, 0, .5);
+            color: #111113
+        }
+
+        [data-theme="light"] .nav-links a.active {
+            background: rgba(150, 210, 0, .15)
+        }
     </style>
 </head>
 
 <body>
-
     <div class="page-transition active" id="pageTransition"></div>
-
     <svg class="grain" width="100%" height="100%">
         <filter id="g">
             <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="4" stitchTiles="stitch" />
         </filter>
         <rect width="100%" height="100%" filter="url(#g)" />
     </svg>
-
-    <!-- NAV -->
     <nav class="nav">
         <div class="nav-inner">
-            <a href="index.html" class="nav-logo">Uhy<span>grapy</span></a>
+            <div class="nav-left">
+                <a href="index.html" class="nav-logo">Uhy<span>grapy</span></a>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle tema"><i id="themeIcon"
+                        class="fas fa-sun"></i></button>
+            </div>
             <ul class="nav-links">
                 <li><a href="index.html">Karya</a></li>
                 <li><a href="gear.html">Peralatan</a></li>
+                <li><a href="price.html">Harga</a></li>
                 <li><a href="contact.html" class="active">Kontak</a></li>
             </ul>
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
         </div>
     </nav>
-
     <div class="mobile-menu" id="mobileMenu">
         <a href="index.html">Karya</a>
         <a href="gear.html">Peralatan</a>
+        <a href="price.html">Harga</a>
         <a href="contact.html" class="active">Kontak</a>
     </div>
-
-    <!-- HERO -->
     <div class="page-hero">
         <div class="label">Hubungi Saya</div>
         <h1>Kontak</h1>
         <p>Ingin bekerja sama atau punya pertanyaan? Saya selalu terbuka untuk diskusi tentang proyek fotografi,
             kolaborasi kreatif, atau sekadar berbagi cerita di balik lensa.</p>
     </div>
-
-    <!-- CONTACT -->
     <section class="contact-section">
         <div class="contact-grid">
-
-            <!-- Form -->
             <div class="form-card" data-reveal>
                 <h3><i class="fas fa-paper-plane"></i> Kirim Pesan</h3>
-
                 <div id="formContent">
-                    <div class="float-group">
-                        <input id="name" type="text" placeholder=" " required>
-                        <label for="name">Nama lengkap</label>
-                    </div>
-                    <div class="float-group">
-                        <input id="email" type="email" placeholder=" " required>
-                        <label for="email">Email</label>
-                    </div>
-                    <div class="float-group">
-                        <textarea id="message" rows="5" placeholder=" " required></textarea>
-                        <label for="message">Ceritakan tentang proyek Anda...</label>
-                    </div>
-                    <button type="button" class="form-submit" onclick="sendMessage()">
-                        <i class="fab fa-whatsapp"></i> Kirim via WhatsApp
-                    </button>
+                    <div class="float-group"><input id="name" type="text" placeholder=" " required><label
+                            for="name">Nama lengkap</label></div>
+                    <div class="float-group"><input id="email" type="email" placeholder=" " required><label
+                            for="email">Email</label></div>
+                    <div class="float-group"><textarea id="message" rows="5" placeholder=" " required></textarea><label
+                            for="message">Ceritakan tentang proyek Anda...</label></div>
+                    <button type="button" class="form-submit" onclick="sendMessage()"><i class="fab fa-whatsapp"></i>
+                        Kirim via WhatsApp</button>
                     <p class="form-hint">Akan membuka WhatsApp dengan pesan yang sudah terisi otomatis.</p>
                 </div>
-
                 <div class="form-success" id="formSuccess">
                     <div class="check-icon"><i class="fas fa-check"></i></div>
                     <h4>Pesan Siap Dikirim!</h4>
                     <p>WhatsApp sudah terbuka dengan pesan Anda. Tinggal tekan kirim.</p>
                 </div>
             </div>
-
-            <!-- Info -->
             <div class="info-col" data-reveal>
                 <div class="info-card">
                     <h3><i class="fas fa-address-card"></i> Info Kontak</h3>
                     <div class="ci-item">
                         <div class="ci-icon lime"><i class="fas fa-envelope"></i></div>
-                        <div>`
+                        <div>
                             <div class="ci-label">Email</div>
                             <div class="ci-value"><a href="mailto:arilmubin0@gmail.com">arilmubin0@gmail.com</a></div>
                         </div>
@@ -771,18 +870,14 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="map-box">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d511.8190341895391!2d112.55884933971679!3d-7.415373585410397!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sid!2sid!4v1731902219701!5m2!1sid!2sid"
                         style="border:0" allowfullscreen loading="lazy"></iframe>
                 </div>
             </div>
-
         </div>
     </section>
-
-    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-inner">
             <p>&copy; 2025 Uhygrapy — Street, wedding, wisudah &amp; dokumentasi &amp; travel fotografi</p>
@@ -794,56 +889,30 @@
             </div>
         </div>
     </footer>
-
     <script>
         const hamburger = document.getElementById('hamburger');
         const mobileMenu = document.getElementById('mobileMenu');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('open');
-            mobileMenu.classList.toggle('visible');
-            mobileMenu.classList.toggle('show');
-            document.body.style.overflow = mobileMenu.classList.contains('show') ? 'hidden' : '';
-        });
-
-        document.querySelectorAll('a[href$=".html"]').forEach(link => {
-            link.addEventListener('click', e => {
-                const href = link.getAttribute('href');
-                if (href === 'contact.html') return;
-                e.preventDefault();
-                const t = document.getElementById('pageTransition');
-                t.classList.add('active');
-                setTimeout(() => window.location.href = href, 350);
-            });
-        });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
+        hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('visible'); mobileMenu.classList.toggle('show'); document.body.style.overflow = mobileMenu.classList.contains('show') ? 'hidden' : ''; });
+        document.querySelectorAll('a[href$=".html"]').forEach(link => { link.addEventListener('click', e => { const href = link.getAttribute('href'); if (href === 'contact.html') return; e.preventDefault(); const t = document.getElementById('pageTransition'); t.classList.add('active'); setTimeout(() => window.location.href = href, 350); }); });
+        const observer = new IntersectionObserver((entries) => { entries.forEach((entry, i) => { if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 80); observer.unobserve(entry.target); } }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
         document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+        function sendMessage() { const n = document.getElementById('name').value.trim(); const e = document.getElementById('email').value.trim(); const m = document.getElementById('message').value.trim(); if (!n || !e || !m) return; const t = `Halo Uhygrapy! 👋\n\nNama: ${n}\nEmail: ${e}\n\nPesan:\n${m}`; window.open(`https://wa.me/6285647234364?text=${encodeURIComponent(t)}`, '_blank'); document.getElementById('formContent').style.display = 'none'; document.getElementById('formSuccess').classList.add('show'); }
+        window.addEventListener('load', () => { document.getElementById('pageTransition').classList.remove('active'); });
 
-        function sendMessage() {
-            const n = document.getElementById('name').value.trim();
-            const e = document.getElementById('email').value.trim();
-            const m = document.getElementById('message').value.trim();
-            if (!n || !e || !m) return;
-            const t = `Halo Uhygrapy! 👋\n\nNama: ${n}\nEmail: ${e}\n\nPesan:\n${m}`;
-            window.open(`https://wa.me/6285647234364?text=${encodeURIComponent(t)}`, '_blank');
-
-            document.getElementById('formContent').style.display = 'none';
-            document.getElementById('formSuccess').classList.add('show');
+        // ── Theme Toggle ──
+        function updateThemeIcon() {
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
         }
-
-        window.addEventListener('load', () => {
-            document.getElementById('pageTransition').classList.remove('active');
+        document.getElementById('themeToggle').addEventListener('click', function () {
+            var cur = document.documentElement.getAttribute('data-theme');
+            var next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeIcon();
         });
+        updateThemeIcon();
     </script>
-
 </body>
 
 </html>
