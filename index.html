@@ -2,1312 +2,746 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark")</script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karya — Uhygrapy</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uhygrapy — Gallery</title>
+    <meta name="description" content="Karya foto Uhygrapy — wisuda, lamaran, cosplay, dan lainnya." />
+
+    <!-- ====== FONTS ====== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet" />
+
     <style>
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
+        :root {
+            --bg: #14110d;
+            /* warm near-black */
+            --bg-soft: #1d1812;
+            --line: #2e271e;
+            --text: #ece5d8;
+            /* warm off-white */
+            --muted: #9a8f7d;
+            --accent: #d9a441;
+            /* cinematic amber */
+            --accent-dim: #a87f30;
+            --wa: #25d366;
+            /* whatsapp green */
+            --radius: 14px;
+            --maxw: 1500px;
         }
 
-        :root {
-            --bg: #0a0a0b;
-            --bg-card: #111113;
-            --bg-el: #18181b;
-            --text: #fafafa;
-            --text-2: #a1a1aa;
-            --text-3: #71717a;
-            --text-4: #52525b;
-            --accent: #c8ff00;
-            --accent-dim: rgba(200, 255, 0, .06);
-            --accent-border: rgba(200, 255, 0, .12);
-            --border: rgba(255, 255, 255, .06);
-            --border-h: rgba(255, 255, 255, .12);
-            --font-d: 'Sora', sans-serif;
-            --font-b: 'Outfit', sans-serif;
-            --ease-out: cubic-bezier(.16, 1, .3, 1);
-            --ease-smooth: cubic-bezier(.4, 0, .2, 1)
+        * {
+            box-sizing: border-box;
         }
 
         html {
-            scroll-behavior: smooth
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: var(--font-b);
+            margin: 0;
             background: var(--bg);
             color: var(--text);
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden
+            overflow-x: hidden;
         }
 
-        .page-transition {
+        /* subtle film grain so it feels cinematic, not flat */
+        body::before {
+            content: "";
             position: fixed;
             inset: 0;
-            background: var(--bg);
-            z-index: 9999;
+            z-index: 0;
             pointer-events: none;
-            opacity: 0;
-            transition: opacity .35s var(--ease-smooth)
+            opacity: .04;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        .page-transition.active {
-            opacity: 1;
-            pointer-events: all
-        }
-
-        .grain {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: .028;
-            mix-blend-mode: overlay
-        }
-
-        ::-webkit-scrollbar {
-            width: 4px
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--text-4);
-            border-radius: 2px
-        }
-
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(10, 10, 11, .6);
-            backdrop-filter: blur(20px) saturate(1.4);
-            -webkit-backdrop-filter: blur(20px) saturate(1.4);
-            border-bottom: 1px solid var(--border)
-        }
-
-        .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center
-        }
-
-        .nav-logo {
-            font-family: var(--font-d);
-            font-weight: 800;
-            font-size: 1.15rem;
-            color: var(--text);
-            text-decoration: none;
-            letter-spacing: -.02em;
-            flex-shrink: 0;
+        .wrap {
             position: relative;
-            z-index: 1001
+            z-index: 1;
+            max-width: var(--maxw);
+            margin: 0 auto;
+            padding: 0 22px;
         }
 
-        .nav-logo span {
-            color: var(--accent)
-        }
-
-        .nav-links {
+        /* ============ HEADER ============ */
+        header {
             display: flex;
-            gap: 0;
-            list-style: none;
-            align-items: center
-        }
-
-        .nav-links a {
-            font-size: .82rem;
-            color: var(--text-3);
-            text-decoration: none;
-            font-weight: 500;
-            padding: .5rem 1.1rem;
-            border-radius: 8px;
-            transition: all .25s var(--ease-smooth);
-            position: relative
-        }
-
-        .nav-links a:hover {
-            color: var(--text-2)
-        }
-
-        .nav-links a.active {
-            color: var(--text);
-            background: var(--accent-dim)
-        }
-
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 16px;
-            height: 2px;
-            background: var(--accent);
-            border-radius: 1px
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            z-index: 1001;
-            padding: 4px;
-            background: none;
-            border: none
-        }
-
-        .hamburger span {
-            display: block;
-            width: 22px;
-            height: 1.5px;
-            background: var(--text);
-            border-radius: 1px;
-            transition: all .3s var(--ease-out)
-        }
-
-        .hamburger.open span:nth-child(1) {
-            transform: rotate(45deg) translate(4px, 5px)
-        }
-
-        .hamburger.open span:nth-child(2) {
-            opacity: 0;
-            transform: translateX(-8px)
-        }
-
-        .hamburger.open span:nth-child(3) {
-            transform: rotate(-45deg) translate(4px, -5px)
-        }
-
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 10, 11, .95);
-            backdrop-filter: blur(24px);
-            z-index: 999;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            opacity: 0;
-            transition: opacity .3s var(--ease-smooth)
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            padding: 26px 0 18px;
         }
 
-        .mobile-menu.show {
-            opacity: 1
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
         }
 
-        .mobile-menu a {
-            font-family: var(--font-d);
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-3);
-            text-decoration: none;
-            transition: all .25s;
-            letter-spacing: -.01em
-        }
-
-        .mobile-menu a:hover {
-            color: var(--text)
-        }
-
-        .mobile-menu a.active {
-            color: var(--accent)
-        }
-
-        .page-hero {
-            padding: 9rem 2rem 2.5rem;
-            max-width: 1200px;
-            margin: 0 auto
-        }
-
-        .page-hero .label {
-            font-family: var(--font-d);
-            font-size: .7rem;
-            font-weight: 600;
+        .aperture {
+            width: 34px;
+            height: 34px;
+            flex: none;
             color: var(--accent);
-            letter-spacing: .12em;
+            animation: spin 26s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .brand-txt {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+            min-width: 0;
+        }
+
+        .brand-name {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: clamp(22px, 4.4vw, 30px);
+            letter-spacing: -.01em;
+        }
+
+        .brand-name b {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .brand-tag {
+            margin-top: 6px;
+            font-size: 11px;
+            letter-spacing: .22em;
             text-transform: uppercase;
-            margin-bottom: .75rem;
-            opacity: 0;
-            transform: translateY(12px);
-            animation: heroIn .6s .15s var(--ease-out) forwards
+            color: var(--muted);
         }
 
-        .page-hero h1 {
-            font-family: var(--font-d);
-            font-size: clamp(2.4rem, 5vw, 3.8rem);
-            font-weight: 800;
-            letter-spacing: -.04em;
-            line-height: 1.05;
-            margin-bottom: 1rem;
-            opacity: 0;
-            transform: translateY(16px);
-            animation: heroIn .7s .25s var(--ease-out) forwards
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .page-hero p {
-            font-size: 1rem;
-            color: var(--text-3);
-            max-width: 520px;
-            line-height: 1.75;
-            opacity: 0;
-            transform: translateY(12px);
-            animation: heroIn .6s .4s var(--ease-out) forwards
-        }
-
-        .music-player {
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: .6rem;
-            padding: .45rem .5rem .45rem .9rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 100px;
-            cursor: pointer;
-            transition: all .3s var(--ease-smooth);
-            user-select: none;
-            margin-top: 1.25rem;
-            opacity: 0;
-            transform: translateY(12px);
-            animation: heroIn .6s .55s var(--ease-out) forwards
-        }
-
-        .music-player:hover {
-            border-color: var(--border-h);
-            background: var(--bg-el)
-        }
-
-        .music-player.playing {
-            border-color: var(--accent-border);
-            background: var(--accent-dim)
-        }
-
-        .music-info {
-            display: flex;
-            flex-direction: column;
-            gap: .05rem;
-            min-width: 0
-        }
-
-        .music-title {
-            font-family: var(--font-d);
-            font-size: .72rem;
-            font-weight: 600;
+            gap: 8px;
+            border: 1px solid var(--line);
+            background: var(--bg-soft);
             color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 120px;
-            line-height: 1.2
+            padding: 11px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform .15s ease, border-color .2s ease, background .2s ease;
+            text-decoration: none;
         }
 
-        .music-status {
-            font-size: .6rem;
-            color: var(--text-4);
-            letter-spacing: .03em;
-            transition: color .3s
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-dim);
         }
 
-        .music-player.playing .music-status {
-            color: var(--accent)
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
 
-        .eq-bars {
-            display: flex;
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-wa {
+            background: var(--wa);
+            border-color: var(--wa);
+            color: #06321a;
+            font-weight: 600;
+        }
+
+        .btn-wa:hover {
+            border-color: var(--wa);
+            filter: brightness(1.06);
+        }
+
+        .btn-music.playing {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .eq {
+            display: inline-flex;
             align-items: flex-end;
             gap: 2px;
-            height: 16px;
-            margin-right: .1rem
+            width: 16px;
+            height: 14px;
         }
 
-        .eq-bar {
+        .eq span {
             width: 3px;
-            background: var(--text-4);
-            border-radius: 1.5px;
-            transition: background .3s
+            background: currentColor;
+            height: 30%;
+            border-radius: 2px;
         }
 
-        .eq-bar:nth-child(1) {
-            height: 6px
+        .btn-music.playing .eq span {
+            animation: bounce .9s ease-in-out infinite;
         }
 
-        .eq-bar:nth-child(2) {
-            height: 12px
+        .btn-music.playing .eq span:nth-child(2) {
+            animation-delay: .2s;
         }
 
-        .eq-bar:nth-child(3) {
-            height: 8px
+        .btn-music.playing .eq span:nth-child(3) {
+            animation-delay: .4s;
         }
 
-        .eq-bar:nth-child(4) {
-            height: 14px
-        }
+        @keyframes bounce {
 
-        .eq-bar:nth-child(5) {
-            height: 10px
-        }
-
-        .music-player.playing .eq-bar {
-            background: var(--accent);
-            animation: eqBounce .8s ease-in-out infinite alternate
-        }
-
-        .music-player.playing .eq-bar:nth-child(1) {
-            animation-duration: .7s
-        }
-
-        .music-player.playing .eq-bar:nth-child(2) {
-            animation-duration: .5s;
-            animation-delay: .1s
-        }
-
-        .music-player.playing .eq-bar:nth-child(3) {
-            animation-duration: .65s;
-            animation-delay: .05s
-        }
-
-        .music-player.playing .eq-bar:nth-child(4) {
-            animation-duration: .55s;
-            animation-delay: .15s
-        }
-
-        .music-player.playing .eq-bar:nth-child(5) {
-            animation-duration: .75s;
-            animation-delay: .08s
-        }
-
-        @keyframes eqBounce {
-            0% {
-                height: 4px
-            }
-
+            0%,
             100% {
-                height: 16px
+                height: 30%;
+            }
+
+            50% {
+                height: 100%;
             }
         }
 
-        .music-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--bg-el);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-2);
-            font-size: .7rem;
-            flex-shrink: 0;
-            transition: all .25s
+        /* ============ INTRO LINE ============ */
+        .intro {
+            padding: 10px 0 22px;
+            max-width: 640px;
         }
 
-        .music-player:hover .music-btn {
-            background: var(--accent-dim);
+        .intro h1 {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 600;
+            font-size: clamp(26px, 5.2vw, 40px);
+            line-height: 1.12;
+            letter-spacing: -.02em;
+        }
+
+        .intro h1 em {
+            font-style: italic;
             color: var(--accent);
-            border-color: var(--accent-border)
         }
 
-        .music-player.playing .music-btn {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent)
+        .intro p {
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
         }
 
-        .gallery-controls {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        /* ============ FILTERS ============ */
+        .filters {
+            position: sticky;
+            top: 0;
+            z-index: 5;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            gap: 9px;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            opacity: 0;
-            transform: translateY(12px);
-            animation: heroIn .6s .5s var(--ease-out) forwards
+            padding: 14px 0;
+            margin-bottom: 6px;
+            background: linear-gradient(var(--bg) 60%, transparent);
+            backdrop-filter: blur(4px);
         }
 
-        .filter-pills {
-            display: flex;
-            gap: .5rem;
-            flex-wrap: wrap
-        }
-
-        .filter-pill {
-            padding: .4rem .9rem;
-            font-family: var(--font-b);
-            font-size: .78rem;
-            font-weight: 500;
-            color: var(--text-3);
+        .chip {
+            border: 1px solid var(--line);
             background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 100px;
+            color: var(--muted);
+            padding: 9px 16px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: all .25s var(--ease-smooth);
-            white-space: nowrap
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: .01em;
+            transition: color .2s, border-color .2s, background .2s, transform .12s;
         }
 
-        .filter-pill:hover {
-            color: var(--text-2);
-            border-color: var(--border-h)
+        .chip:hover {
+            color: var(--text);
+            transform: translateY(-1px);
         }
 
-        .filter-pill.active {
+        .chip:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .chip.active {
             color: var(--bg);
             background: var(--accent);
-            border-color: var(--accent)
+            border-color: var(--accent);
+            font-weight: 600;
         }
 
-        .gallery-count {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            font-size: .75rem;
-            font-weight: 500;
-            color: var(--text-4)
+        .chip .count {
+            opacity: .6;
+            font-size: 11px;
+            margin-left: 5px;
         }
 
-        .gallery-count .count-num {
-            font-family: var(--font-d);
-            font-weight: 700;
-            color: var(--text-3)
-        }
-
+        /* ============ MASONRY GALLERY ============ */
+        /* CSS columns = tinggi nyesuain rasio asli foto (dinamis) */
         .gallery {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem 6rem
+            column-count: 4;
+            column-gap: 16px;
+            padding-bottom: 60px;
         }
 
-        .masonry-grid {
-            columns: 3;
-            column-gap: .75rem
+        @media (max-width:1200px) {
+            .gallery {
+                column-count: 3;
+            }
         }
 
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            cursor: pointer;
+        @media (max-width:780px) {
+            .gallery {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width:460px) {
+            .gallery {
+                column-count: 1;
+            }
+        }
+
+        figure.card {
+            margin: 0 0 16px;
             break-inside: avoid;
-            margin-bottom: .75rem;
-            display: block;
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--bg-soft);
+            cursor: zoom-in;
             opacity: 0;
-            transform: translateY(20px)
+            transform: translateY(14px);
+            animation: rise .6s ease forwards;
         }
 
-        .gallery-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity .5s var(--ease-out), transform .6s var(--ease-out)
+        @keyframes rise {
+            to {
+                opacity: 1;
+                transform: none;
+            }
         }
 
-        .gallery-item.hiding {
-            opacity: 0;
-            transform: scale(.95);
-            transition: all .3s var(--ease-smooth);
-            pointer-events: none
-        }
-
-        .gallery-item img {
+        figure.card img {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 12px;
-            transition: filter .4s var(--ease-smooth)
+            transition: transform .5s ease;
         }
 
-        .gallery-item:hover img {
-            filter: brightness(.5)
+        figure.card:hover img {
+            transform: scale(1.05);
         }
 
-        .gallery-item .overlay {
+        figure.card figcaption {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 40%, rgba(10, 10, 11, .92) 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 1.5rem;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 30px 16px 14px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, .78));
             opacity: 0;
-            border-radius: 12px;
-            transition: opacity .35s var(--ease-smooth)
-        }
-
-        .gallery-item:hover .overlay {
-            opacity: 1
-        }
-
-        .overlay .cat {
-            font-size: .65rem;
-            color: var(--accent);
-            font-weight: 600;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            margin-bottom: .3rem;
             transform: translateY(8px);
-            transition: transform .4s var(--ease-out);
-            transition-delay: .05s
+            transition: opacity .3s, transform .3s;
+            font-size: 13px;
         }
 
-        .gallery-item:hover .overlay .cat {
-            transform: translateY(0)
+        figure.card:hover figcaption {
+            opacity: 1;
+            transform: none;
         }
 
-        .overlay h3 {
-            font-family: var(--font-d);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-            transform: translateY(10px);
-            transition: transform .4s var(--ease-out);
-            transition-delay: .1s
+        figcaption .cat {
+            display: inline-block;
+            font-size: 10px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 4px;
         }
 
-        .gallery-item:hover .overlay h3 {
-            transform: translateY(0)
+        .card.hide {
+            display: none;
         }
 
-        .overlay .view-icon {
-            position: absolute;
-            top: 1.2rem;
-            right: 1.2rem;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .1);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text);
-            font-size: .75rem;
-            transform: scale(.7);
-            opacity: 0;
-            transition: all .3s var(--ease-out);
-            transition-delay: .15s
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 60px 0;
+            font-size: 15px;
+            display: none;
         }
 
-        .gallery-item:hover .overlay .view-icon {
-            transform: scale(1);
-            opacity: 1
-        }
-
-        .lightbox {
+        /* ============ LIGHTBOX ============ */
+        .lb {
             position: fixed;
             inset: 0;
-            z-index: 10000;
-            background: rgba(5, 5, 6, .92);
-            backdrop-filter: blur(24px);
-            display: flex;
+            z-index: 50;
+            display: none;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .35s var(--ease-smooth);
-            cursor: zoom-out
+            background: rgba(10, 8, 6, .94);
+            backdrop-filter: blur(6px);
         }
 
-        .lightbox.open {
-            opacity: 1;
-            pointer-events: all
+        .lb.open {
+            display: flex;
+            animation: fade .25s ease;
         }
 
-        .lightbox img {
+        @keyframes fade {
+            from {
+                opacity: 0;
+            }
+        }
+
+        .lb img {
             max-width: 90vw;
-            max-height: 85vh;
-            object-fit: contain;
+            max-height: 82vh;
             border-radius: 10px;
-            transform: scale(.92);
-            transition: transform .4s var(--ease-out);
-            cursor: default
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
         }
 
-        .lightbox.open img {
-            transform: scale(1)
-        }
-
-        .lightbox-close {
+        .lb-cap {
             position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .08);
-            border: 1px solid rgba(255, 255, 255, .1);
-            color: var(--text);
-            font-size: .9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all .25s
+            bottom: 26px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
         }
 
-        .lightbox-close:hover {
-            background: rgba(255, 255, 255, .15)
-        }
-
-        .lightbox-info {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center
-        }
-
-        .lightbox-info .cat {
-            font-size: .68rem;
+        .lb-cap .cat {
             color: var(--accent);
-            font-weight: 600;
-            letter-spacing: .08em;
-            text-transform: uppercase
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            font-size: 10px;
         }
 
-        .lightbox-info h3 {
-            font-family: var(--font-d);
-            font-size: 1.05rem;
-            font-weight: 600;
+        .lb-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .15);
             color: var(--text);
-            margin-top: .2rem
+            font-size: 22px;
+            display: grid;
+            place-items: center;
+            transition: background .2s;
         }
 
-        .footer {
-            border-top: 1px solid var(--border);
-            padding: 3rem 2rem
+        .lb-btn:hover {
+            background: rgba(255, 255, 255, .18);
         }
 
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
+        .lb-prev {
+            left: 18px;
+        }
+
+        .lb-next {
+            right: 18px;
+        }
+
+        .lb-close {
+            top: 18px;
+            right: 18px;
+            transform: none;
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 30px 0 50px;
+            color: var(--muted);
+            font-size: 13px;
             display: flex;
             justify-content: space-between;
-            align-items: center
+            gap: 14px;
+            flex-wrap: wrap;
         }
 
-        .footer p {
-            font-size: .75rem;
-            color: var(--text-4)
-        }
-
-        .footer-socials {
-            display: flex;
-            gap: .75rem
-        }
-
-        .footer-socials a {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            background: var(--bg-el);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-3);
-            font-size: .8rem;
+        footer a {
+            color: var(--text);
             text-decoration: none;
-            transition: all .25s var(--ease-smooth)
         }
 
-        .footer-socials a:hover {
-            border-color: var(--accent-border);
+        footer a:hover {
             color: var(--accent);
-            transform: translateY(-2px)
         }
 
-        @keyframes heroIn {
-            to {
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            figure.card {
                 opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        /* ── THEME TOGGLE ── */
-        .theme-toggle {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            background: var(--bg-el);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-3);
-            font-size: .8rem;
-            cursor: pointer;
-            transition: all .25s var(--ease-smooth);
-            flex-shrink: 0
-        }
-
-        .theme-toggle:hover {
-            border-color: var(--border-h);
-            color: var(--text)
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            flex-shrink: 0
-        }
-
-        /* ── LIGHT MODE ── */
-        [data-theme="light"] {
-            --bg: #f4f4f5;
-            --bg-card: #ffffff;
-            --bg-el: #e4e4e7;
-            --text: #111113;
-            --text-2: #3f3f46;
-            --text-3: #71717a;
-            --text-4: #a1a1aa;
-            --accent: #c8ff00;
-            --accent-dim: rgba(150, 210, 0, .1);
-            --accent-border: rgba(80, 130, 0, .22);
-            --border: rgba(0, 0, 0, .08);
-            --border-h: rgba(0, 0, 0, .16)
-        }
-
-        [data-theme="light"] .nav {
-            background: rgba(244, 244, 245, .9)
-        }
-
-        [data-theme="light"] .mobile-menu {
-            background: rgba(244, 244, 245, .97)
-        }
-
-        [data-theme="light"] .grain {
-            opacity: .012
-        }
-
-        [data-theme="light"] .nav-logo span,
-        [data-theme="light"] .page-hero .label,
-        [data-theme="light"] .music-player.playing .music-status,
-        [data-theme="light"] .overlay .cat,
-        [data-theme="light"] .lightbox-info .cat,
-        [data-theme="light"] .music-player .music-btn {
-            color: #4a7900
-        }
-
-        [data-theme="light"] .nav-links a.active::after {
-            background: #4a7900
-        }
-
-        [data-theme="light"] .mobile-menu a.active {
-            color: #4a7900
-        }
-
-        [data-theme="light"] .music-player.playing .eq-bar {
-            background: #4a7900
-        }
-
-        [data-theme="light"] .filter-pill.active,
-        [data-theme="light"] .music-player.playing .music-btn {
-            color: #111113
-        }
-
-        [data-theme="light"] .nav-links a.active {
-            background: rgba(150, 210, 0, .15)
-        }
-
-        /* ── RESPONSIVE ── */
-        @media(max-width:900px) {
-            .masonry-grid {
-                columns: 2
-            }
-        }
-
-        @media(max-width:768px) {
-            .nav-links {
-                display: none
-            }
-
-            .hamburger {
-                display: flex
-            }
-
-            .mobile-menu.visible {
-                display: flex
-            }
-
-            .page-hero {
-                padding: 7.5rem 1.25rem 2rem
-            }
-
-            .page-hero h1 {
-                font-size: 2.2rem
-            }
-
-            .gallery-controls {
-                padding: 0 1.25rem
-            }
-
-            .gallery {
-                padding: 0 1.25rem 4rem
-            }
-
-            .masonry-grid {
-                columns: 2;
-                column-gap: .5rem
-            }
-
-            .gallery-item {
-                margin-bottom: .5rem
-            }
-
-            .overlay h3 {
-                font-size: .95rem
-            }
-
-            .overlay {
-                padding: 1rem
-            }
-
-            .footer-inner {
-                flex-direction: column;
-                gap: 1rem
-            }
-        }
-
-        @media(max-width:480px) {
-            .masonry-grid {
-                columns: 1
+                transform: none;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="page-transition" id="pageTransition"></div>
-    <svg class="grain" width="100%" height="100%">
-        <filter id="g">
-            <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="4" stitchTiles="stitch" />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#g)" />
-    </svg>
+    <div class="wrap">
 
-    <nav class="nav">
-        <div class="nav-inner">
-            <div class="nav-left">
-                <a href="index.html" class="nav-logo">Uhy<span>grapy</span></a>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle tema"><i id="themeIcon"
-                        class="fas fa-sun"></i></button>
+        <!-- HEADER -->
+        <header>
+            <div class="brand">
+                <svg class="aperture" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5">
+                    <circle cx="50" cy="50" r="40" />
+                    <path d="M50 10 L68 41 H32 Z M90 50 L59 68 V32 Z M50 90 L32 59 H68 Z M10 50 L41 32 V68 Z" />
+                </svg>
+                <div class="brand-txt">
+                    <div class="brand-name">Uhy<b>grapy</b></div>
+                    <div class="brand-tag">Cosplay · Wisuda · Lamaran</div>
+                </div>
             </div>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Karya</a></li>
-                <li><a href="gear.html">Peralatan</a></li>
-                <li><a href="price.html">Harga</a></li>
-                <li><a href="contact.html">Kontak</a></li>
-            </ul>
-            <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-        </div>
-    </nav>
 
-    <div class="mobile-menu" id="mobileMenu">
-        <a href="index.html" class="active">Karya</a>
-        <a href="gear.html">Peralatan</a>
-        <a href="price.html">Harga</a>
-        <a href="contact.html">Kontak</a>
+            <div class="actions">
+                <button class="btn btn-music" id="musicBtn" aria-pressed="false" aria-label="Putar musik latar">
+                    <span class="eq" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span id="musicLabel">Music</span>
+                </button>
+                <a class="btn btn-wa" id="waBtn" target="_blank" rel="noopener" href="#">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.477-.92zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                    Hubungi WA
+                </a>
+            </div>
+        </header>
+
+        <!-- INTRO -->
+        <section class="intro">
+            <h1>Setiap momen punya <em>cahayanya</em> sendiri.</h1>
+            <p>Koleksi karya Uhygrapy. Pilih kategori di bawah, klik foto buat lihat lebih besar.</p>
+        </section>
+
+        <!-- FILTERS -->
+        <nav class="filters" id="filters" aria-label="Filter kategori foto"></nav>
+
+        <!-- GALLERY -->
+        <main class="gallery" id="gallery"></main>
+        <p class="empty" id="empty">Belum ada foto di kategori ini.</p>
+
+        <footer>
+            <span>© <span id="yr"></span> Uhygrapy — Mojokerto - Gresik - Sidoarjo - Surabaya</span>
+            <span><a href="https://instagram.com/uhycore" target="_blank" rel="noopener">@uhycore</a></span>
+        </footer>
     </div>
 
-    <div class="page-hero">
-        <div class="label">Portfolio Fotografi</div>
-        <h1>Karya Saya</h1>
-        <p>Koleksi fotografi cosplay, graduation, engagement, dan lainnya. Setiap frame menyimpan cerita dan momen yang
-            tak terulang.</p>
-        <div class="music-player" id="musicPlayer" onclick="toggleMusic()">
-            <div class="eq-bars">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-            </div>
-            <div class="music-info">
-                <span class="music-title">Background Music</span>
-                <span class="music-status" id="musicStatusText">Klik untuk putar</span>
-            </div>
-            <div class="music-btn" id="musicBtnIcon"><i class="fas fa-play"></i></div>
-        </div>
+    <!-- LIGHTBOX -->
+    <div class="lb" id="lb" aria-hidden="true">
+        <button class="lb-btn lb-close" id="lbClose" aria-label="Tutup">✕</button>
+        <button class="lb-btn lb-prev" id="lbPrev" aria-label="Sebelumnya">‹</button>
+        <img id="lbImg" alt="" />
+        <button class="lb-btn lb-next" id="lbNext" aria-label="Berikutnya">›</button>
+        <div class="lb-cap" id="lbCap"></div>
     </div>
 
-    <div class="gallery-controls">
-        <div class="filter-pills">
-            <button class="filter-pill active" data-filter="all">Semua</button>
-            <button class="filter-pill" data-filter="cosplay">Cosplay</button>
-            <button class="filter-pill" data-filter="graduation">Graduation</button>
-            <button class="filter-pill" data-filter="engagement">Engagement</button>
-            <button class="filter-pill" data-filter="lainnya">Lainnya</button>
-        </div>
-        <div class="gallery-count"><span class="count-num" id="countNum">0</span> karya</div>
-    </div>
-
-    <section class="gallery">
-        <div class="masonry-grid" id="masonryGrid">
-
-            <!-- COSPLAY -->
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer1.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer2.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer3.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer4.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer5.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer6.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer7.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer8.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="cosplay"><img src="images/foto_cosplayer9.jpg" alt="Cosplay Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Cosplay</div>
-                    <h3>Cosplay Photography</h3>
-                </div>
-            </div>
-
-            <!-- GRADUATION (ex-wisuda) -->
-            <div class="gallery-item" data-cat="graduation"><img src="images/foto_wisudah1.jpg"
-                    alt="Graduation Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Graduation</div>
-                    <h3>Graduation Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="graduation"><img src="images/foto_wisudah2.jpg"
-                    alt="Graduation Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Graduation</div>
-                    <h3>Graduation Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="graduation"><img src="images/foto_wisudah3.jpg"
-                    alt="Graduation Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Graduation</div>
-                    <h3>Graduation Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="graduation"><img src="images/foto_wisudah4.jpg"
-                    alt="Graduation Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Graduation</div>
-                    <h3>Graduation Photography</h3>
-                </div>
-            </div>
-
-            <!-- ENGAGEMENT -->
-            <div class="gallery-item" data-cat="engagement"><img src="images/engangment1.jpg"
-                    alt="Engagement Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Engagement</div>
-                    <h3>Engagement Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="engagement"><img src="images/engangment2.jpg"
-                    alt="Engagement Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Engagement</div>
-                    <h3>Engagement Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="engagement"><img src="images/engangment3.jpg"
-                    alt="Engagement Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Engagement</div>
-                    <h3>Engagement Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="engagement"><img src="images/engangment4.jpg"
-                    alt="Engagement Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Engagement</div>
-                    <h3>Engagement Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="engagement"><img src="images/engangment5.jpg"
-                    alt="Engagement Photography" loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Engagement</div>
-                    <h3>Engagement Photography</h3>
-                </div>
-            </div>
-
-            <!-- LAINNYA -->
-            <div class="gallery-item" data-cat="lainnya"><img src="images/lainnya1.jpg" alt="Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Lainnya</div>
-                    <h3>Photography</h3>
-                </div>
-            </div>
-            <div class="gallery-item" data-cat="lainnya"><img src="images/lainnya2.jpg" alt="Photography"
-                    loading="lazy">
-                <div class="overlay">
-                    <div class="view-icon"><i class="fas fa-expand"></i></div>
-                    <div class="cat">Lainnya</div>
-                    <h3>Photography</h3>
-                </div>
-            </div>
-            
-        </div>
-    </section>
-
-    <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" id="lightboxClose"><i class="fas fa-xmark"></i></button>
-        <img src="" alt="" id="lightboxImg">
-        <div class="lightbox-info">
-            <div class="cat" id="lightboxCat"></div>
-            <h3 id="lightboxTitle"></h3>
-        </div>
-    </div>
-
-    <footer class="footer">
-        <div class="footer-inner">
-            <p>&copy; 2025 Uhygrapy — Cosplay, graduation, engagement &amp; fotografi lainnya</p>
-            <div class="footer-socials">
-                <a href="https://instagram.com/uhycore" target="_blank" aria-label="Instagram"><i
-                        class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/6285647234364" target="_blank" aria-label="WhatsApp"><i
-                        class="fab fa-whatsapp"></i></a>
-            </div>
-        </div>
-    </footer>
+    <!-- Musik latar. Ganti src ke file lagumu (mis. lagu.mp3 di folder yang sama). -->
+    <audio id="audio" loop preload="none" src="music/music.mp3"></audio>
 
     <script>
-        const hamburger = document.getElementById('hamburger');
-        const mobileMenu = document.getElementById('mobileMenu');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('open');
-            mobileMenu.classList.toggle('visible');
-            mobileMenu.classList.toggle('show');
-            document.body.style.overflow = mobileMenu.classList.contains('show') ? 'hidden' : '';
+        /* =====================================================================
+           1) NOMOR WHATSAPP  — ganti ke nomormu, format 62 (tanpa + dan tanpa 0)
+           ===================================================================== */
+        const WA_NUMBER = "6285647234364";
+        const WA_MESSAGE = "Halo Uhygrapy! Aku mau tanya soal jasa foto 📸";
+        document.getElementById("waBtn").href =
+            `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`;
+
+        /* =====================================================================
+           2) DAFTAR FOTO
+           - cat : "wisuda" | "lamaran" | "cosplay" | "lainnya"
+           - src : ganti ke path/URL fotomu sendiri
+           Foto di bawah cuma contoh (rasio beda-beda biar layout dinamisnya kelihatan).
+           ===================================================================== */
+        const PHOTOS = [
+            // ---- Wisuda ----
+            { src: "images/foto_wisudah1.jpg", cat: "wisuda", title: "Hari kelulusan" },
+            { src: "images/foto_wisudah2.jpg", cat: "wisuda", title: "Hari kelulusan" },
+            { src: "images/foto_wisudah3.jpg", cat: "wisuda", title: "Hari kelulusan" },
+            { src: "images/foto_wisudah4.jpg", cat: "wisuda", title: "Hari kelulusan" },
+
+            // ---- Lamaran (engagement) ----
+            { src: "images/engangment1.jpg", cat: "lamaran", title: "Momen lamaran" },
+            { src: "images/engangment2.jpg", cat: "lamaran", title: "Momen lamaran" },
+            { src: "images/engangment3.jpg", cat: "lamaran", title: "Momen lamaran" },
+            { src: "images/engangment4.jpg", cat: "lamaran", title: "Momen lamaran" },
+            { src: "images/engangment5.jpg", cat: "lamaran", title: "Momen lamaran" },
+            { src: "images/engangment6.jpg", cat: "lamaran", title: "Momen lamaran" },
+
+            // ---- Cosplay ----
+            { src: "images/foto_cosplayer2.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer3.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer4.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer5.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer6.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer7.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer8.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            { src: "images/foto_cosplayer9.jpg", cat: "cosplay", title: "Sesi cosplay" },
+
+            // ---- Lainnya ----
+            { src: "images/lainnya1.jpg", cat: "lainnya", title: "Frame pilihan" },
+            { src: "images/lainnya2.jpg", cat: "lainnya", title: "Frame pilihan" },
+            { src: "images/lainnya3.jpg", cat: "lainnya", title: "Frame pilihan" },
+            { src: "images/lainnya4.jpg", cat: "lainnya", title: "Frame pilihan" },
+            { src: "images/lainnya5.jpg", cat: "lainnya", title: "Frame pilihan" },
+
+        
+        ];
+
+        /* Label kategori (urutan tampil) */
+        const CATS = [
+            { key: "semua", label: "Semua" },
+            { key: "wisuda", label: "Wisuda" },
+            { key: "lamaran", label: "Lamaran" },
+            { key: "cosplay", label: "Cosplay" },
+            { key: "lainnya", label: "Lainnya" },
+        ];
+
+        /* ---------- render filter chips ---------- */
+        const filtersEl = document.getElementById("filters");
+        CATS.forEach((c, i) => {
+            const n = c.key === "semua" ? PHOTOS.length : PHOTOS.filter(p => p.cat === c.key).length;
+            if (c.key !== "semua" && n === 0) return; // skip kategori kosong
+            const b = document.createElement("button");
+            b.className = "chip" + (i === 0 ? " active" : "");
+            b.dataset.cat = c.key;
+            b.innerHTML = `${c.label}<span class="count">${n}</span>`;
+            b.addEventListener("click", () => setFilter(c.key, b));
+            filtersEl.appendChild(b);
         });
 
-        document.querySelectorAll('a[href$=".html"]').forEach(link => {
-            link.addEventListener('click', e => {
-                const href = link.getAttribute('href');
-                if (href === 'index.html') return;
-                e.preventDefault();
-                const t = document.getElementById('pageTransition');
-                t.classList.add('active');
-                setTimeout(() => window.location.href = href, 350);
-            });
+        /* ---------- render gallery ---------- */
+        const galleryEl = document.getElementById("gallery");
+        const emptyEl = document.getElementById("empty");
+        PHOTOS.forEach((p, idx) => {
+            const fig = document.createElement("figure");
+            fig.className = "card";
+            fig.dataset.cat = p.cat;
+            fig.dataset.idx = idx;
+            fig.style.animationDelay = (idx % 8 * 0.05) + "s";
+            const catLabel = (CATS.find(c => c.key === p.cat) || {}).label || p.cat;
+            fig.innerHTML = `
+    <img src="${p.src}" alt="${p.title} — ${catLabel}" loading="lazy" />
+    <figcaption><span class="cat">${catLabel}</span><br>${p.title}</figcaption>`;
+            fig.addEventListener("click", () => openLightbox(idx));
+            galleryEl.appendChild(fig);
         });
 
-        // Gallery observe
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => entry.target.classList.add('visible'), i * 60);
-                    observer.unobserve(entry.target);
-                }
+        /* ---------- filtering ---------- */
+        let currentCat = "semua";
+        function setFilter(cat, btn) {
+            currentCat = cat;
+            document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+            btn.classList.add("active");
+            let shown = 0;
+            document.querySelectorAll(".card").forEach(card => {
+                const match = cat === "semua" || card.dataset.cat === cat;
+                card.classList.toggle("hide", !match);
+                if (match) shown++;
             });
-        }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
-        document.querySelectorAll('.gallery-item').forEach(el => observer.observe(el));
-
-        // Count on load
-        const countNum = document.getElementById('countNum');
-        function updateCount(filter) {
-            const items = document.querySelectorAll('.gallery-item');
-            let count = 0;
-            items.forEach(item => {
-                if (filter === 'all' || item.dataset.cat === filter) count++;
-            });
-            countNum.textContent = count;
+            emptyEl.style.display = shown ? "none" : "block";
         }
-        updateCount('all');
 
-        // Filter pills
-        const pills = document.querySelectorAll('.filter-pill');
-        const grid = document.getElementById('masonryGrid');
-        pills.forEach(pill => {
-            pill.addEventListener('click', () => {
-                pills.forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-                const filter = pill.dataset.filter;
-                const items = grid.querySelectorAll('.gallery-item');
-                let count = 0;
-                items.forEach(item => {
-                    if (filter === 'all' || item.dataset.cat === filter) {
-                        item.style.display = '';
-                        item.classList.remove('hiding');
-                        setTimeout(() => item.classList.add('visible'), 50);
-                        count++;
-                    } else {
-                        item.classList.add('hiding');
-                        item.classList.remove('visible');
-                        setTimeout(() => { item.style.display = 'none'; }, 300);
-                    }
-                });
-                countNum.textContent = count;
-            });
-        });
+        /* ---------- lightbox ---------- */
+        const lb = document.getElementById("lb");
+        const lbImg = document.getElementById("lbImg");
+        const lbCap = document.getElementById("lbCap");
+        let lbList = [], lbPos = 0;
 
-        // Lightbox
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const lightboxCat = document.getElementById('lightboxCat');
-        const lightboxTitle = document.getElementById('lightboxTitle');
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const img = item.querySelector('img');
-                const cat = item.querySelector('.cat');
-                const title = item.querySelector('h3');
-                lightboxImg.src = img.src;
-                lightboxCat.textContent = cat.textContent;
-                lightboxTitle.textContent = title.textContent;
-                lightbox.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-        [lightbox, document.getElementById('lightboxClose')].forEach(el => {
-            el.addEventListener('click', e => {
-                if (e.target === lightboxImg) return;
-                lightbox.classList.remove('open');
-                document.body.style.overflow = '';
-            });
-        });
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && lightbox.classList.contains('open')) {
-                lightbox.classList.remove('open');
-                document.body.style.overflow = '';
-            }
+        function visiblePhotos() {
+            return PHOTOS.map((p, i) => ({ ...p, i }))
+                .filter(p => currentCat === "semua" || p.cat === currentCat);
+        }
+        function openLightbox(idx) {
+            lbList = visiblePhotos();
+            lbPos = lbList.findIndex(p => p.i === idx);
+            showLb();
+            lb.classList.add("open");
+            lb.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+        function showLb() {
+            const p = lbList[lbPos];
+            const catLabel = (CATS.find(c => c.key === p.cat) || {}).label || p.cat;
+            lbImg.src = p.src; lbImg.alt = p.title;
+            lbCap.innerHTML = `<span class="cat">${catLabel}</span><br>${p.title}`;
+        }
+        function closeLb() {
+            lb.classList.remove("open");
+            lb.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        }
+        function move(d) { lbPos = (lbPos + d + lbList.length) % lbList.length; showLb(); }
+
+        document.getElementById("lbClose").addEventListener("click", closeLb);
+        document.getElementById("lbPrev").addEventListener("click", e => { e.stopPropagation(); move(-1); });
+        document.getElementById("lbNext").addEventListener("click", e => { e.stopPropagation(); move(1); });
+        lb.addEventListener("click", e => { if (e.target === lb) closeLb(); });
+        document.addEventListener("keydown", e => {
+            if (!lb.classList.contains("open")) return;
+            if (e.key === "Escape") closeLb();
+            if (e.key === "ArrowLeft") move(-1);
+            if (e.key === "ArrowRight") move(1);
         });
 
-        // Music
-        const audio = new Audio('music/music.mp3');
-        audio.loop = true; audio.volume = 0.5;
-        const playerEl = document.getElementById('musicPlayer');
-        const statusText = document.getElementById('musicStatusText');
-        const btnIcon = document.getElementById('musicBtnIcon');
-        let isPlaying = false;
-        function toggleMusic() {
-            if (isPlaying) {
-                audio.pause();
-                playerEl.classList.remove('playing');
-                btnIcon.innerHTML = '<i class="fas fa-play"></i>';
-                statusText.textContent = 'Dijeda';
-                isPlaying = false;
-            } else {
+        /* ---------- music toggle ---------- */
+        const audio = document.getElementById("audio");
+        const musicBtn = document.getElementById("musicBtn");
+        const musicLabel = document.getElementById("musicLabel");
+        musicBtn.addEventListener("click", () => {
+            if (audio.paused) {
                 audio.play().then(() => {
-                    playerEl.classList.add('playing');
-                    btnIcon.innerHTML = '<i class="fas fa-pause"></i>';
-                    statusText.textContent = 'Sedang diputar';
-                    isPlaying = true;
-                }).catch(() => { statusText.textContent = 'Klik sekali lagi'; });
+                    musicBtn.classList.add("playing");
+                    musicBtn.setAttribute("aria-pressed", "true");
+                    musicLabel.textContent = "Playing";
+                }).catch(() => {
+                    musicLabel.textContent = "No file";
+                    setTimeout(() => musicLabel.textContent = "Music", 1800);
+                });
+            } else {
+                audio.pause();
+                musicBtn.classList.remove("playing");
+                musicBtn.setAttribute("aria-pressed", "false");
+                musicLabel.textContent = "Music";
             }
-        }
-        audio.addEventListener('ended', () => {
-            playerEl.classList.remove('playing');
-            btnIcon.innerHTML = '<i class="fas fa-play"></i>';
-            statusText.textContent = 'Selesai';
-            isPlaying = false;
         });
 
-        window.addEventListener('load', () => {
-            document.getElementById('pageTransition').classList.remove('active');
-        });
-
-        // Theme toggle
-        function updateThemeIcon() {
-            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
-        }
-        document.getElementById('themeToggle').addEventListener('click', function () {
-            var cur = document.documentElement.getAttribute('data-theme');
-            var next = cur === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            updateThemeIcon();
-        });
-        updateThemeIcon();
+        document.getElementById("yr").textContent = new Date().getFullYear();
     </script>
 </body>
 
