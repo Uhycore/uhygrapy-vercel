@@ -783,6 +783,107 @@
             color: var(--muted);
         }
 
+        /* ============ PROFIL ============ */
+        .pf {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 46px;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .pf {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        .pf-photos {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 1.2fr 1fr;
+            grid-template-rows: 175px 175px;
+        }
+
+        .pf-cell {
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--bg-soft);
+        }
+
+        .pf-photos img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .55s ease;
+        }
+
+        .pf-cell:hover img {
+            transform: scale(1.04);
+        }
+
+        .pf-a {
+            grid-row: 1 / 3;
+        }
+
+        /* foto pertama = tall (kiri) */
+
+        /* 2 foto: sejajar, sama tinggi */
+        .pf-count-2 .pf-photos {
+            grid-template-rows: 360px;
+        }
+
+        .pf-count-2 .pf-a {
+            grid-row: 1 / 2;
+        }
+
+        /* 1 foto: satu kolom penuh */
+        .pf-count-1 .pf-photos {
+            grid-template-columns: 1fr;
+            grid-template-rows: 380px;
+        }
+
+        @media (max-width: 900px) {
+            .pf-photos {
+                grid-template-rows: 150px 150px;
+            }
+
+            .pf-count-2 .pf-photos {
+                grid-template-rows: 300px;
+            }
+        }
+
+        .pf-text h2 {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 600;
+            font-size: clamp(26px, 4vw, 42px);
+            letter-spacing: -.02em;
+            line-height: 1.08;
+        }
+
+        .pf-text p {
+            margin: 16px 0 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.75;
+            max-width: 480px;
+        }
+
+        .pf-text .pf-meta {
+            margin-top: 12px;
+            font-size: 12.5px;
+            letter-spacing: .02em;
+        }
+
+        .pf-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
         /* ============ LIGHTBOX ============ */
         .lb {
             position: fixed;
@@ -1012,6 +1113,22 @@
         const WA_NUMBER = "6285647234364";
         const WA_MESSAGE = "Halo Uhygrapy! Aku mau tanya soal jasa foto 📸";
 
+        /* --- 1b) PROFIL / TENTANG SAYA ---
+           photos : 1–3 foto diri (taruh di folder images/). Foto pertama = besar (tall).
+           heading, bio, meta : tinggal edit teksnya. ig : username Instagram. */
+        const PROFILE = {
+            eyebrow: "Profil",
+            heading: "Di balik lensa Uhygrapy.",
+            bio: "Halo! Aku fotografer sekaligus videografer asal Surabaya yang jatuh cinta sama cerita di balik setiap frame. Dari wisuda, lamaran, cosplay, sampai dokumentasi acara — fokusku satu: menangkap momen dengan rasa sinematik yang hangat dan personal. Buat aku, foto yang bagus itu bukan cuma tajam, tapi kerasa.",
+            meta: "Berbasis di Sidoarjo · Melayani Mojokerto, Gresik, Surabaya, dan sekitarnya",
+            ig: "uhycore",
+            photos: [
+                "images/profile1.jpg",
+                "images/profile2.jpg",
+                "images/profile3.jpg",
+            ],
+        };
+
         /* --- 2) FOTO ---
            cat: "cosplay" | "lamaran" | "wisuda" | "casual" | "lainnya" | "dokumentasi"
            Dirender per-section sesuai cat (bukan digabung + filter).
@@ -1141,6 +1258,7 @@
 
         /* ---------- NAV (urutan = urutan section) ---------- */
         const NAV = [
+            { id: "profil", label: "Profil" },
             ...PHOTO_SECTIONS.map(s => ({ id: s.key, label: s.nav || s.label })),
             { id: "video", label: "Video" },
             { id: "sertifikat", label: "Sertifikat" },
@@ -1190,6 +1308,44 @@
 
             if (items.length) buildPhotoGrid(el.querySelector(".grid"), items, sec.label);
         }
+
+        /* ---------- SECTION PROFIL (paling atas) ---------- */
+        (function renderProfile() {
+            const photos = (PROFILE.photos || []).filter(Boolean).slice(0, 3);
+            const cellCls = ["pf-a", "pf-b", "pf-c"];
+            const photosHtml = photos.map((src, i) =>
+                `<div class="pf-cell ${cellCls[i] || ""}"><img src="${esc(src)}" alt="${esc(PROFILE.heading)}" loading="lazy" /></div>`
+            ).join("");
+
+            const igHtml = PROFILE.ig ? `
+                <a class="btn" href="https://instagram.com/${esc(PROFILE.ig)}" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.06 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.36 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.06 1.2-.25 1.8-.42 2.2-.22.6-.48 1-.9 1.4-.4.42-.8.68-1.4.9-.4.17-1 .36-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.06-1.8-.25-2.2-.42-.6-.22-1-.48-1.4-.9-.42-.4-.68-.8-.9-1.4-.17-.4-.36-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.06-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.36 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8zm0 1.8a3.1 3.1 0 1 1 0 6.2 3.1 3.1 0 0 1 0-6.2zm5.1-2.7a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3z"/></svg>
+                    Instagram
+                </a>` : "";
+            const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`;
+
+            const el = document.createElement("section");
+            el.className = "block";
+            el.id = "profil";
+            el.innerHTML = `
+                <div class="pf pf-count-${photos.length}">
+                    <div class="pf-photos">${photosHtml}</div>
+                    <div class="pf-text">
+                        <span class="eyebrow">${esc(PROFILE.eyebrow || "Profil")}</span>
+                        <h2>${esc(PROFILE.heading)}</h2>
+                        <p>${esc(PROFILE.bio)}</p>
+                        ${PROFILE.meta ? `<p class="pf-meta">${esc(PROFILE.meta)}</p>` : ""}
+                        <div class="pf-actions">
+                            ${igHtml}
+                            <a class="btn btn-wa" href="${waHref}" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.477-.92zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>`;
+            contentEl.appendChild(el);
+        })();
 
         /* ---------- SECTION FOTO (termasuk Dokumentasi) ---------- */
         PHOTO_SECTIONS.forEach((sec, i) => renderPhotoSection(sec, i + 1));
