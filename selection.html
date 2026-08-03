@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pilih Foto — Studio Seleksi</title>
+    <meta name="description"
+        content="Pilih foto dari folder Google Drive untuk diedit — kirim daftar pilihan langsung lewat WhatsApp." />
+
+    <!-- ====== FONTS ====== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* =====================================================================
+   TOKEN DESAIN — senada dengan identitas visual Uhygrapy:
+   dominan hitam, aksen merah maroon gelap, tipografi Space Grotesk + Inter.
+   Warna BIRU dipakai KHUSUS untuk menandai foto yang sedang dipilih,
+   supaya beda jelas dari aksen merah tema (bukan warna interaktif biasa).
+   ===================================================================== */
+        :root {
+            --bg: #0a0a0a;
+            --bg-soft: #141414;
+            --bg-soft-2: #1b1b1b;
+            --line: #262626;
+            --text: #e9e9e9;
+            --muted: #8a8a8a;
+            --accent: #8b1e1e;
+            /* merah maroon — identitas studio */
+            --accent-dim: #6b1616;
+            --select: #3b7dff;
+            /* biru — khusus status "dipilih" */
+            --select-bg: rgba(59, 125, 255, .14);
+            --ok: #2fae63;
+            --err: #c94b4b;
+            --wa: #25d366;
+            --radius: 14px;
+            --radius-sm: 9px;
+            --maxw: 1320px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .02;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: var(--maxw);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Space Grotesk", sans-serif;
+            letter-spacing: -.02em;
+            margin: 0;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        /* ============ HEADER ============ */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 30px 0 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand svg {
+            width: 30px;
+            height: 30px;
+            color: var(--text);
+            opacity: .9;
+            animation: spin 36s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .brand-name {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: clamp(19px, 4vw, 24px);
+        }
+
+        .brand-name b {
+            color: var(--accent);
+        }
+
+        .brand-tag {
+            margin-top: 4px;
+            font-size: 10.5px;
+            letter-spacing: .24em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* ============ HERO ============ */
+        .hero {
+            padding: 20px 0 36px;
+            max-width: 680px;
+        }
+
+        .hero .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+
+        .hero .eyebrow::before {
+            content: "";
+            width: 24px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .hero h1 {
+            font-weight: 600;
+            font-size: clamp(26px, 4.6vw, 42px);
+            line-height: 1.12;
+        }
+
+        .hero p {
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 14.5px;
+            line-height: 1.7;
+            max-width: 540px;
+        }
+
+        /* ============ PANEL (kartu umum) ============ */
+        .panel {
+            background: var(--bg-soft);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 22px;
+        }
+
+        .panel+.panel {
+            margin-top: 18px;
+        }
+
+        /* ============ FORM INPUT LINK DRIVE ============ */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .field {
+            flex: 1 1 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field label {
+            font-size: 12px;
+            letter-spacing: .04em;
+            color: var(--muted);
+        }
+
+        input[type="text"],
+        input[type="tel"] {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            padding: 12px 14px;
+            outline: none;
+            transition: border-color .2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="tel"]:focus {
+            border-color: var(--accent-dim);
+        }
+
+        input::placeholder {
+            color: #5c5c5c;
+        }
+
+        /* ============ BUTTON ============ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: border-color .2s ease, background .2s ease, opacity .2s ease, transform .15s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-dim);
+        }
+
+        .btn:active {
+            transform: scale(.98);
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            flex: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent-dim);
+        }
+
+        .btn-wa {
+            border-color: color-mix(in srgb, var(--wa) 55%, transparent);
+            color: var(--wa);
+        }
+
+        .btn-wa:hover {
+            border-color: var(--wa);
+            background: color-mix(in srgb, var(--wa) 10%, transparent);
+        }
+
+        .btn-ghost {
+            color: var(--muted);
+        }
+
+        .btn-sm {
+            padding: 9px 14px;
+            font-size: 12.5px;
+        }
+
+        /* ============ RINGKASAN FOTO TERPILIH ============ */
+        .selected-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .selected-head h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .selected-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+            gap: 12px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .chip {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-soft-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            animation: rise .3s ease forwards;
+        }
+
+        .chip img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            display: block;
+            background: var(--bg-soft);
+        }
+
+        .chip .chip-name {
+            font-size: 11.5px;
+            color: var(--text);
+            padding: 7px 8px 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chip .chip-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            flex: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 0, 0, .6);
+            border: 1px solid rgba(255, 255, 255, .16);
+            cursor: pointer;
+            color: #fff;
+            transition: background .15s ease, transform .15s ease;
+        }
+
+        .chip .chip-remove:hover {
+            background: var(--accent);
+            transform: scale(1.06);
+        }
+
+        .chip .chip-remove svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            stroke-width: 2.6;
+        }
+
+        .chip .chip-zoom {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            flex: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 0, 0, .6);
+            border: 1px solid rgba(255, 255, 255, .16);
+            cursor: zoom-in;
+            color: #fff;
+            transition: background .15s ease, transform .15s ease;
+        }
+
+        .chip .chip-zoom:hover {
+            background: var(--accent);
+            transform: scale(1.06);
+        }
+
+        .chip .chip-zoom svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            stroke-width: 2.2;
+        }
+
+        /* ============ TOOLBAR ============ */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .toolbar .field {
+            flex: 1 1 260px;
+            margin: 0;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .counter {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .counter b {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .counter .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--select);
+        }
+
+        /* ============ STATUS / PROGRESS ============ */
+        .status {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--bg-soft-2);
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .status.show {
+            display: flex;
+        }
+
+        .status.is-error {
+            border-color: color-mix(in srgb, var(--err) 45%, var(--line));
+            color: var(--err);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            flex: none;
+            border-radius: 999px;
+            border: 2px solid var(--line);
+            border-top-color: var(--accent);
+            animation: spin-s .7s linear infinite;
+        }
+
+        @keyframes spin-s {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--line);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width .3s ease;
+        }
+
+        /* ============ EMPTY STATE ============ */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 64px 20px;
+            text-align: center;
+            border: 1px dashed var(--line);
+            border-radius: var(--radius);
+            color: var(--muted);
+        }
+
+        .empty-state svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--muted);
+            opacity: .8;
+        }
+
+        .empty-state .es-line {
+            width: 28px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .empty-state b {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* ============ GRID FOTO ============ */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .card {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--bg-soft);
+            border: 1.5px solid var(--line);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: rise .45s ease forwards;
+            transition: border-color .25s ease, transform .25s ease;
+        }
+
+        @keyframes rise {
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-dim);
+        }
+
+        .card:focus-visible {
+            outline: 2px solid var(--select);
+            outline-offset: 2px;
+        }
+
+        .card.selected {
+            border-color: var(--select);
+        }
+
+        .card.selected .thumb::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--select-bg);
+        }
+
+        .thumb {
+            position: relative;
+            aspect-ratio: 1/1;
+            background: var(--bg-soft-2);
+            overflow: hidden;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity .35s ease, transform .5s ease;
+        }
+
+        .thumb img.loaded {
+            opacity: 1;
+        }
+
+        .card:hover .thumb img.loaded {
+            transform: scale(1.04);
+        }
+
+        /* skeleton shimmer sebelum thumbnail dimuat */
+        .skeleton {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(100deg, var(--bg-soft-2) 30%, #232323 50%, var(--bg-soft-2) 70%);
+            background-size: 220% 100%;
+            animation: shimmer 1.3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: 120% 0;
+            }
+
+            to {
+                background-position: -20% 0;
+            }
+        }
+
+        .check {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: var(--select);
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            transform: scale(.6);
+            transition: opacity .18s ease, transform .18s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .4);
+        }
+
+        .card.selected .check {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .check svg {
+            width: 14px;
+            height: 14px;
+            stroke: #fff;
+            stroke-width: 3;
+        }
+
+        .preview-btn {
+            position: absolute;
+            top: 9px;
+            left: 9px;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, .55);
+            border: 1px solid rgba(255, 255, 255, .18);
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            transition: opacity .2s ease, background .2s ease;
+            cursor: zoom-in;
+        }
+
+        .card:hover .preview-btn,
+        .card:focus-within .preview-btn {
+            opacity: 1;
+        }
+
+        .preview-btn:hover {
+            background: var(--accent);
+        }
+
+        .preview-btn svg {
+            width: 13px;
+            height: 13px;
+            stroke: #fff;
+            stroke-width: 2;
+        }
+
+        .meta {
+            padding: 10px 12px 12px;
+        }
+
+        .meta .fname {
+            font-size: 12px;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ============ LIGHTBOX ============ */
+        .lb {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 6, 6, .95);
+            backdrop-filter: blur(6px);
+        }
+
+        .lb.open {
+            display: flex;
+            animation: fade .2s ease;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+            }
+        }
+
+        .lb img {
+            max-width: 90vw;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+        }
+
+        .lb-cap {
+            position: absolute;
+            bottom: 22px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 0 16px;
+        }
+
+        .lb-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .14);
+            color: var(--text);
+            font-size: 20px;
+            display: grid;
+            place-items: center;
+            transition: background .2s;
+        }
+
+        .lb-btn:hover {
+            background: rgba(255, 255, 255, .16);
+        }
+
+        .lb-prev {
+            left: 16px;
+        }
+
+        .lb-next {
+            right: 16px;
+        }
+
+        .lb-close {
+            top: 16px;
+            right: 16px;
+            transform: none;
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 26px;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-soft-2);
+            border: 1px solid var(--line);
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease, transform .25s ease;
+            z-index: 70;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast svg {
+            width: 15px;
+            height: 15px;
+            stroke: var(--ok);
+        }
+
+        /* ============ PANDUAN ============ */
+        .guide h2 {
+            font-weight: 600;
+            font-size: clamp(20px, 3vw, 26px);
+        }
+
+        .guide .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+
+        .guide .eyebrow::before {
+            content: "";
+            width: 24px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .guide ol,
+        .guide ul {
+            color: var(--muted);
+            font-size: 13.5px;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .guide li b,
+        .guide li code {
+            color: var(--text);
+        }
+
+        .guide code {
+            background: var(--bg-soft-2);
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            padding: 1px 6px;
+            font-size: 12.5px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        }
+
+        .guide h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 22px 0 10px;
+        }
+
+        .guide h3:first-of-type {
+            margin-top: 6px;
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 30px 0 50px;
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 12.5px;
+            text-align: center;
+        }
+
+        section.block {
+            padding: 46px 0;
+            border-top: 1px solid var(--line);
+            scroll-margin-top: 20px;
+        }
+
+        section.block:first-of-type {
+            border-top: none;
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            .card {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+
+        <!-- ================= HEADER ================= -->
+        <header>
+            <div class="brand">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5">
+                    <circle cx="50" cy="50" r="40" />
+                    <path d="M50 10 L68 41 H32 Z M90 50 L59 68 V32 Z M50 90 L32 59 H68 Z M10 50 L41 32 V68 Z" />
+                </svg>
+                <div>
+                    <div class="brand-name">Studio <b>Seleksi</b></div>
+                    <div class="brand-tag">Pilih Foto · Untuk Diedit</div>
+                </div>
+            </div>
+            <!-- Ganti href sesuai lokasi file portofolio Anda (mis. "index.html" atau "https://uhygrapy.vercel.app") -->
+            <a class="btn btn-sm" href="index.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Kembali ke Portofolio Uhygrapy
+            </a>
+        </header>
+
+        <!-- ================= HERO ================= -->
+        <section class="hero">
+            <span class="eyebrow">Galeri Klien</span>
+            <h1>Pilih foto favoritmu, kami yang edit.</h1>
+            <p>Tempelkan link folder Google Drive dari fotografer, telusuri semua foto, lalu tandai mana saja yang ingin
+                diedit. Daftar pilihanmu bisa langsung dikirim lewat WhatsApp.</p>
+        </section>
+
+        <!-- ================= PANDUAN PENGGUNAAN (untuk klien) ================= -->
+        <section class="block guide" id="cara-pakai">
+            <span class="eyebrow">Panduan</span>
+            <h2>Cara menggunakan halaman ini</h2>
+            <ol>
+                <li>Tempelkan <b>link folder Google Drive</b> dari fotografer ke kolom di bawah, lalu klik tombol
+                    <b>Load Foto</b>.</li>
+                <li>Tunggu sebentar sampai semua foto muncul dalam bentuk grid.</li>
+                <li>Klik foto yang ingin diedit untuk <b>memilihnya</b> — kartu akan bertanda centang biru. Klik sekali
+                    lagi untuk membatalkan pilihan.</li>
+                <li>Gunakan kolom <b>Cari nama file…</b> kalau ingin mencari foto tertentu dengan cepat.</li>
+                <li>Klik ikon kaca pembesar (atau klik dua kali pada foto) untuk melihat <b>preview ukuran besar</b>.
+                </li>
+                <li>Daftar foto yang sudah dipilih akan tampil di atas tombol kirim, jadi kamu bisa cek ulang sebelum
+                    mengirim.</li>
+                <li>Setelah yakin, klik <b>Salin Nama File</b> untuk menyalin daftar nama file, atau langsung klik
+                    <b>Kirim ke WhatsApp</b> untuk mengirim daftar pilihan ke fotografer.</li>
+            </ol>
+        </section>
+
+        <!-- ================= INPUT LINK DRIVE ================= -->
+        <section class="block" id="load-area">
+            <div class="panel">
+                <div class="input-row">
+                    <div class="field">
+                        <label for="driveLink">Link folder Google Drive</label>
+                        <input type="text" id="driveLink"
+                            placeholder="https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx" />
+                    </div>
+                    <div class="field" style="flex:0 0 auto; justify-content:flex-end;">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" id="loadBtn" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Load Foto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- status: spinner / progress / error -->
+                <div class="status" id="statusBox">
+                    <div class="spinner" id="statusSpinner"></div>
+                    <span id="statusText">Mengambil daftar foto…</span>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= TOOLBAR (muncul setelah foto termuat) ================= -->
+            <div class="toolbar" id="toolbar" style="display:none;">
+                <div class="field">
+                    <input type="text" id="searchInput" placeholder="Cari nama file…" />
+                </div>
+                <div class="toolbar-actions">
+                    <button class="btn btn-sm btn-ghost" id="selectAllBtn" type="button">Pilih Semua</button>
+                    <button class="btn btn-sm btn-ghost" id="clearSelectionBtn" type="button">Hapus Pilihan</button>
+                </div>
+            </div>
+            <div class="counter" id="counterBox" style="display:none; margin-top:12px;">
+                <span class="dot"></span>
+                Dipilih: <b id="counterNum">0</b> foto
+            </div>
+
+            <!-- ================= GRID FOTO ================= -->
+            <div class="grid" id="photoGrid"></div>
+
+            <!-- ================= EMPTY STATE AWAL ================= -->
+            <div class="empty-state" id="initialEmpty">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="M21 15l-5-5L5 21" />
+                </svg>
+                <p>Belum ada foto dimuat. Tempelkan link folder Drive di atas lalu klik <b>Load Foto</b>.</p>
+            </div>
+
+            <!-- ================= RINGKASAN FOTO TERPILIH (muncul saat ada pilihan) ================= -->
+            <div class="panel" id="selectedPanel" style="display:none; margin-top:24px;">
+                <div class="selected-head">
+                    <h3>Foto yang dipilih (<span id="selectedHeadCount">0</span>)</h3>
+                </div>
+                <div class="selected-list" id="selectedList"></div>
+            </div>
+
+            <!-- ================= AKSI KIRIM (muncul setelah ada foto dipilih) ================= -->
+            <div class="input-row" id="sendActions" style="display:none; margin-top:18px;">
+                <button class="btn" id="copyBtn" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Salin Nama File
+                </button>
+                <a class="btn btn-wa" id="waSendBtn" href="#" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.477-.92zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                    Kirim ke WhatsApp
+                </a>
+            </div>
+        </section>
+
+    
+        <footer>
+            Studio Seleksi — dibuat untuk mempermudah proses pemilihan foto klien.
+        </footer>
+    </div>
+
+    <!-- ================= LIGHTBOX ================= -->
+    <div class="lb" id="lb" aria-hidden="true">
+        <button class="lb-btn lb-close" id="lbClose" aria-label="Tutup">✕</button>
+        <button class="lb-btn lb-prev" id="lbPrev" aria-label="Sebelumnya">‹</button>
+        <img id="lbImg" src="" alt="" />
+        <button class="lb-btn lb-next" id="lbNext" aria-label="Berikutnya">›</button>
+        <div class="lb-cap" id="lbCap"></div>
+    </div>
+
+    <!-- ================= TOAST ================= -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5" />
+        </svg>
+        <span id="toastText">Berhasil disalin</span>
+    </div>
+
+    <script>
+        /* =====================================================================
+           ================  KONFIGURASI — EDIT DI SINI  ======================
+           ===================================================================== */
+
+        // Ganti dengan API Key Google Drive milikmu (lihat panduan di bawah website).
+        const DRIVE_API_KEY = "AIzaSyDBbWNIMLMV2BkT3Y3857QpUsa5JP2S_OY";
+
+        // Nomor WhatsApp tujuan (format 62, tanpa + dan tanpa 0 di depan).
+        const WA_NUMBER = "6285647234364";
+
+        /* =====================================================================
+           ================  STATE APLIKASI  ===================================
+           ===================================================================== */
+
+        let allPhotos = [];      // seluruh foto hasil load dari Drive
+        let filteredPhotos = [];  // hasil setelah difilter search
+        const selected = new Set(); // menyimpan id file yang dipilih
+
+        /* =====================================================================
+           ================  AMBIL ELEMEN DOM  =================================
+           ===================================================================== */
+
+        const driveLinkInput = document.getElementById("driveLink");
+        const loadBtn = document.getElementById("loadBtn");
+        const statusBox = document.getElementById("statusBox");
+        const statusText = document.getElementById("statusText");
+        const statusSpinner = document.getElementById("statusSpinner");
+        const progressFill = document.getElementById("progressFill");
+        const toolbar = document.getElementById("toolbar");
+        const counterBox = document.getElementById("counterBox");
+        const counterNum = document.getElementById("counterNum");
+        const selectedPanel = document.getElementById("selectedPanel");
+        const selectedList = document.getElementById("selectedList");
+        const selectedHeadCount = document.getElementById("selectedHeadCount");
+        const searchInput = document.getElementById("searchInput");
+        const photoGrid = document.getElementById("photoGrid");
+        const initialEmpty = document.getElementById("initialEmpty");
+        const sendActions = document.getElementById("sendActions");
+        const selectAllBtn = document.getElementById("selectAllBtn");
+        const clearSelectionBtn = document.getElementById("clearSelectionBtn");
+        const copyBtn = document.getElementById("copyBtn");
+        const waSendBtn = document.getElementById("waSendBtn");
+        const toast = document.getElementById("toast");
+        const toastText = document.getElementById("toastText");
+
+        /* =====================================================================
+           ================  HELPER UMUM  ======================================
+           ===================================================================== */
+
+        const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+        // Ambil nama file tanpa ekstensi, dipakai untuk teks yang dikirim/disalin.
+        function baseName(name) {
+            const idx = name.lastIndexOf(".");
+            return idx > 0 ? name.slice(0, idx) : name;
+        }
+
+        function showToast(msg, isError = false) {
+            toastText.textContent = msg;
+            toast.querySelector("svg").style.stroke = isError ? "var(--err)" : "var(--ok)";
+            toast.classList.add("show");
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => toast.classList.remove("show"), 2400);
+        }
+
+        // Ekstrak Folder ID dari berbagai bentuk link Google Drive.
+        function extractFolderId(url) {
+            if (!url) return null;
+            const trimmed = url.trim();
+            // Pola umum: /folders/FOLDER_ID
+            let m = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+            if (m) return m[1];
+            // Pola: ?id=FOLDER_ID
+            m = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            if (m) return m[1];
+            // Kalau user langsung menempel ID mentah (bukan URL)
+            if (/^[a-zA-Z0-9_-]{10,}$/.test(trimmed)) return trimmed;
+            return null;
+        }
+
+        function setStatus(text, mode) {
+            // mode: "loading" | "error" | "hidden"
+            statusBox.classList.remove("is-error");
+            if (mode === "hidden") {
+                statusBox.classList.remove("show");
+                return;
+            }
+            statusBox.classList.add("show");
+            statusText.textContent = text;
+            statusSpinner.style.display = mode === "loading" ? "block" : "none";
+            progressFill.parentElement.style.display = mode === "loading" ? "block" : "none";
+            if (mode === "error") statusBox.classList.add("is-error");
+        }
+
+        /* =====================================================================
+           ================  AMBIL DATA DARI GOOGLE DRIVE API  =================
+           ===================================================================== */
+
+        async function fetchAllPhotosFromDrive(folderId) {
+            const files = [];
+            let pageToken = "";
+            let page = 0;
+
+            do {
+                page += 1;
+                setStatus(`Mengambil daftar foto… (halaman ${page}, ${files.length} foto ditemukan)`, "loading");
+                progressFill.style.width = Math.min(90, page * 12) + "%";
+
+                const params = new URLSearchParams({
+                    q: `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`,
+                    fields: "nextPageToken, files(id, name, thumbnailLink, mimeType)",
+                    pageSize: "200",
+                    key: DRIVE_API_KEY,
+                });
+                if (pageToken) params.set("pageToken", pageToken);
+
+                const res = await fetch(`https://www.googleapis.com/drive/v3/files?${params.toString()}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    const message = data?.error?.message || `Gagal memuat foto (status ${res.status}).`;
+                    throw new Error(message);
+                }
+
+                files.push(...(data.files || []));
+                pageToken = data.nextPageToken || "";
+            } while (pageToken);
+
+            progressFill.style.width = "100%";
+            return files;
+        }
+
+        /* =====================================================================
+           ================  RENDER GRID FOTO  =================================
+           ===================================================================== */
+
+        // IntersectionObserver untuk lazy-load thumbnail: src baru dipasang
+        // saat kartu benar-benar mendekati layar, supaya tetap ringan meski
+        // folder berisi ribuan foto.
+        const lazyObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const img = entry.target;
+                const src = img.dataset.src;
+                if (!src) return;
+                img.src = src;
+                img.addEventListener("load", () => img.classList.add("loaded"), { once: true });
+                img.addEventListener("error", () => {
+                    // thumbnail gagal dimuat -> tampilkan ikon fallback sederhana
+                    img.closest(".thumb").querySelector(".skeleton")?.remove();
+                    img.replaceWith(Object.assign(document.createElement("div"), {
+                        className: "ph-fallback",
+                        style: "position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;",
+                        textContent: "Preview tidak tersedia",
+                    }));
+                }, { once: true });
+                img.removeAttribute("data-src");
+                lazyObserver.unobserve(img);
+            });
+        }, { rootMargin: "300px 0px" });
+
+        function renderGrid() {
+            photoGrid.innerHTML = "";
+            lazyObserver.disconnect();
+
+            if (filteredPhotos.length === 0) {
+                const msg = allPhotos.length === 0
+                    ? "Folder ini tidak berisi foto."
+                    : "Tidak ada foto yang cocok dengan pencarian.";
+                photoGrid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="es-line"></span>
+        <p>${esc(msg)}</p>
+      </div>`;
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+
+            filteredPhotos.forEach((file, idx) => {
+                const card = document.createElement("div");
+                card.className = "card" + (selected.has(file.id) ? " selected" : "");
+                card.tabIndex = 0;
+                card.dataset.id = file.id;
+                card.style.animationDelay = (idx % 12) * 0.03 + "s";
+
+                const thumbSrc = file.thumbnailLink || "";
+
+                card.innerHTML = `
+      <div class="thumb">
+        <div class="skeleton"></div>
+        <img data-src="${esc(thumbSrc)}" alt="${esc(file.name)}" loading="lazy" />
+        <button type="button" class="preview-btn" title="Preview" aria-label="Preview foto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
+        </button>
+        <span class="check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+        </span>
+      </div>
+      <div class="meta"><div class="fname" title="${esc(file.name)}">${esc(file.name)}</div></div>
+    `;
+
+                const img = card.querySelector("img");
+                // hilangkan skeleton begitu gambar selesai dimuat
+                img.addEventListener("load", () => {
+                    card.querySelector(".skeleton")?.remove();
+                }, { once: true });
+                lazyObserver.observe(img);
+
+                // klik kartu -> toggle pilih (klik pada tombol preview tidak ikut memilih)
+                card.addEventListener("click", (e) => {
+                    if (e.target.closest(".preview-btn")) return;
+                    toggleSelect(file.id);
+                });
+                card.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSelect(file.id); }
+                });
+                // dobel klik -> buka preview besar
+                card.addEventListener("dblclick", () => openLightbox(file.id));
+                card.querySelector(".preview-btn").addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    openLightbox(file.id);
+                });
+
+                frag.appendChild(card);
+            });
+
+            photoGrid.appendChild(frag);
+        }
+
+        /* =====================================================================
+           ================  SELEKSI FOTO  ======================================
+           ===================================================================== */
+
+        function toggleSelect(id) {
+            if (selected.has(id)) selected.delete(id);
+            else selected.add(id);
+
+            const card = photoGrid.querySelector(`.card[data-id="${cssEscape(id)}"]`);
+            if (card) card.classList.toggle("selected", selected.has(id));
+
+            updateCounter();
+        }
+
+        // util kecil supaya id (yang mungkin mengandung karakter khusus) aman dipakai di selector
+        function cssEscape(id) {
+            return String(id).replace(/[^a-zA-Z0-9_-]/g, (c) => "\\" + c);
+        }
+
+        function updateCounter() {
+            counterNum.textContent = selected.size;
+            sendActions.style.display = selected.size > 0 ? "flex" : "none";
+            renderSelectedPanel();
+            buildWhatsAppLink();
+        }
+
+        // Drive mengirim thumbnailLink dalam resolusi kecil (=s220 dsb). Untuk
+        // kartu ringkasan yang lebih besar, minta ukuran yang lebih tinggi.
+        function mediumThumb(file) {
+            if (!file.thumbnailLink) return "";
+            return file.thumbnailLink.replace(/=s\d+$/, "=s300");
+        }
+
+        // Menampilkan ringkasan foto yang sudah dipilih (thumbnail lebih besar + nama),
+        // jadi klien bisa cek ulang sebelum menyalin atau mengirim ke WhatsApp.
+        function renderSelectedPanel() {
+            selectedHeadCount.textContent = selected.size;
+
+            if (selected.size === 0) {
+                selectedPanel.style.display = "none";
+                selectedList.innerHTML = "";
+                return;
+            }
+            selectedPanel.style.display = "block";
+
+            const chosen = allPhotos.filter((f) => selected.has(f.id));
+            selectedList.innerHTML = "";
+
+            const frag = document.createDocumentFragment();
+            chosen.forEach((file) => {
+                const chip = document.createElement("span");
+                chip.className = "chip";
+                chip.innerHTML = `
+      <img src="${esc(mediumThumb(file))}" alt="" loading="lazy" />
+      <span class="chip-name" title="${esc(file.name)}">${esc(file.name)}</span>
+      <button type="button" class="chip-zoom" aria-label="Perbesar ${esc(file.name)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
+      </button>
+      <button type="button" class="chip-remove" aria-label="Batalkan pilihan ${esc(file.name)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>`;
+                chip.querySelector(".chip-remove").addEventListener("click", () => toggleSelect(file.id));
+                chip.querySelector(".chip-zoom").addEventListener("click", () => openLightbox(file.id, chosen));
+                frag.appendChild(chip);
+            });
+            selectedList.appendChild(frag);
+        }
+
+        selectAllBtn.addEventListener("click", () => {
+            filteredPhotos.forEach((f) => selected.add(f.id));
+            renderGrid();
+            updateCounter();
+        });
+
+        clearSelectionBtn.addEventListener("click", () => {
+            selected.clear();
+            renderGrid();
+            updateCounter();
+        });
+
+        /* =====================================================================
+           ================  SEARCH REALTIME  ===================================
+           ===================================================================== */
+
+        searchInput.addEventListener("input", () => {
+            const q = searchInput.value.trim().toLowerCase();
+            filteredPhotos = q
+                ? allPhotos.filter((f) => f.name.toLowerCase().includes(q))
+                : allPhotos.slice();
+            renderGrid();
+        });
+
+        /* =====================================================================
+           ================  SALIN NAMA FILE  ===================================
+           ===================================================================== */
+
+        function getSelectedNames() {
+            return allPhotos
+                .filter((f) => selected.has(f.id))
+                .map((f) => baseName(f.name));
+        }
+
+        copyBtn.addEventListener("click", async () => {
+            const names = getSelectedNames();
+            if (names.length === 0) return;
+            const text = names.join("\n");
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(`${names.length} nama file berhasil disalin`);
+            } catch (err) {
+                showToast("Gagal menyalin — coba salin manual", true);
+            }
+        });
+
+        /* =====================================================================
+           ================  KIRIM WHATSAPP  ====================================
+           ===================================================================== */
+
+        function buildWhatsAppLink() {
+            const names = getSelectedNames();
+            const daftar = names.join("\n");
+            const pesan = `Halo Kak,\nBerikut foto yang saya pilih untuk diedit:\n${daftar}`;
+            waSendBtn.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(pesan)}`;
+        }
+
+        /* =====================================================================
+           ================  LIGHTBOX PREVIEW  ==================================
+           ===================================================================== */
+
+        const lb = document.getElementById("lb");
+        const lbImg = document.getElementById("lbImg");
+        const lbCap = document.getElementById("lbCap");
+        let lbPos = 0;
+        let lbList = filteredPhotos; // daftar foto yang sedang dinavigasi di lightbox (bisa ganti sesuai konteks)
+
+        function fullSizeUrl(file) {
+            // thumbnailLink Drive bisa diminta ukuran lebih besar dengan mengganti parameter =sXXX
+            if (file.thumbnailLink) return file.thumbnailLink.replace(/=s\d+$/, "=s1600");
+            return "";
+        }
+
+        // list: kumpulan foto untuk tombol prev/next (default: grid utama).
+        // Dipakai juga dari panel "Foto yang dipilih" agar navigasi lightbox
+        // mengikuti daftar terpilih, bukan seluruh grid.
+        function openLightbox(id, list = filteredPhotos) {
+            lbList = list;
+            lbPos = lbList.findIndex((f) => f.id === id);
+            if (lbPos === -1) return;
+            renderLightbox();
+            lb.classList.add("open");
+            lb.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function renderLightbox() {
+            const file = lbList[lbPos];
+            if (!file) return;
+            lbImg.src = fullSizeUrl(file);
+            lbImg.alt = file.name;
+            lbCap.textContent = file.name;
+        }
+
+        function closeLightbox() {
+            lb.classList.remove("open");
+            lb.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            lbImg.src = "";
+        }
+
+        function moveLightbox(dir) {
+            if (lbList.length < 2) return;
+            lbPos = (lbPos + dir + lbList.length) % lbList.length;
+            renderLightbox();
+        }
+
+        document.getElementById("lbClose").addEventListener("click", closeLightbox);
+        document.getElementById("lbPrev").addEventListener("click", (e) => { e.stopPropagation(); moveLightbox(-1); });
+        document.getElementById("lbNext").addEventListener("click", (e) => { e.stopPropagation(); moveLightbox(1); });
+        lb.addEventListener("click", (e) => { if (e.target === lb) closeLightbox(); });
+        document.addEventListener("keydown", (e) => {
+            if (!lb.classList.contains("open")) return;
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowLeft") moveLightbox(-1);
+            if (e.key === "ArrowRight") moveLightbox(1);
+        });
+
+        /* =====================================================================
+           ================  LOAD FOTO (tombol utama)  ==========================
+           ===================================================================== */
+
+        loadBtn.addEventListener("click", async () => {
+            const folderId = extractFolderId(driveLinkInput.value);
+
+            if (!folderId) {
+                setStatus("Link Google Drive tidak valid. Pastikan link mengandung /folders/ID.", "error");
+                return;
+            }
+            if (!DRIVE_API_KEY || DRIVE_API_KEY.includes("GANTI_DENGAN")) {
+                setStatus("API Key Google Drive belum diisi. Lihat panduan di bagian bawah halaman.", "error");
+                return;
+            }
+
+            loadBtn.disabled = true;
+            progressFill.style.width = "0%";
+            setStatus("Menghubungkan ke Google Drive…", "loading");
+            initialEmpty.style.display = "none";
+            photoGrid.innerHTML = "";
+            toolbar.style.display = "none";
+            counterBox.style.display = "none";
+            sendActions.style.display = "none";
+            selected.clear();
+
+            try {
+                const files = await fetchAllPhotosFromDrive(folderId);
+
+                allPhotos = files;
+                filteredPhotos = files.slice();
+                searchInput.value = "";
+
+                setStatus("", "hidden");
+
+                if (files.length === 0) {
+                    toolbar.style.display = "none";
+                    counterBox.style.display = "none";
+                } else {
+                    toolbar.style.display = "flex";
+                    counterBox.style.display = "flex";
+                }
+                updateCounter();
+                renderGrid();
+            } catch (err) {
+                console.error(err);
+                setStatus(`Gagal memuat foto: ${err.message}`, "error");
+                initialEmpty.style.display = "flex";
+            } finally {
+                loadBtn.disabled = false;
+            }
+        });
+
+        // Enter di kolom input link -> langsung load
+        driveLinkInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") loadBtn.click();
+        });
+    </script>
+</body>
+
+</html>
