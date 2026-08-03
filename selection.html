@@ -785,6 +785,48 @@
             transform: none;
         }
 
+        .lb-select {
+            position: absolute;
+            left: 50%;
+            bottom: 72px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            border: 1px solid var(--select);
+            background: rgba(10, 10, 10, .7);
+            color: var(--select);
+            padding: 11px 20px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .2s ease, color .2s ease, border-color .2s ease;
+        }
+
+        .lb-select svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+        }
+
+        .lb-select:hover {
+            background: var(--select);
+            color: #fff;
+        }
+
+        .lb-select.is-selected {
+            background: var(--select);
+            color: #fff;
+        }
+
+        .lb-select.is-selected:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
         /* ============ TOAST ============ */
         .toast {
             position: fixed;
@@ -947,7 +989,8 @@
             <h2>Cara menggunakan halaman ini</h2>
             <ol>
                 <li>Tempelkan <b>link folder Google Drive</b> dari fotografer ke kolom di bawah, lalu klik tombol
-                    <b>Load Foto</b>.</li>
+                    <b>Load Foto</b>.
+                </li>
                 <li>Tunggu sebentar sampai semua foto muncul dalam bentuk grid.</li>
                 <li>Klik foto yang ingin diedit untuk <b>memilihnya</b> — kartu akan bertanda centang biru. Klik sekali
                     lagi untuk membatalkan pilihan.</li>
@@ -957,7 +1000,8 @@
                 <li>Daftar foto yang sudah dipilih akan tampil di atas tombol kirim, jadi kamu bisa cek ulang sebelum
                     mengirim.</li>
                 <li>Setelah yakin, klik <b>Salin Nama File</b> untuk menyalin daftar nama file, atau langsung klik
-                    <b>Kirim ke WhatsApp</b> untuk mengirim daftar pilihan ke fotografer.</li>
+                    <b>Kirim ke WhatsApp</b> untuk mengirim daftar pilihan ke fotografer.
+                </li>
             </ol>
         </section>
 
@@ -1050,7 +1094,7 @@
             </div>
         </section>
 
-    
+
         <footer>
             Studio Seleksi — dibuat untuk mempermudah proses pemilihan foto klien.
         </footer>
@@ -1063,6 +1107,13 @@
         <img id="lbImg" src="" alt="" />
         <button class="lb-btn lb-next" id="lbNext" aria-label="Berikutnya">›</button>
         <div class="lb-cap" id="lbCap"></div>
+        <button type="button" class="lb-select" id="lbSelectBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+            </svg>
+            <span id="lbSelectText">Pilih Foto Ini</span>
+        </button>
     </div>
 
     <!-- ================= TOAST ================= -->
@@ -1437,6 +1488,8 @@
         const lb = document.getElementById("lb");
         const lbImg = document.getElementById("lbImg");
         const lbCap = document.getElementById("lbCap");
+        const lbSelectBtn = document.getElementById("lbSelectBtn");
+        const lbSelectText = document.getElementById("lbSelectText");
         let lbPos = 0;
         let lbList = filteredPhotos; // daftar foto yang sedang dinavigasi di lightbox (bisa ganti sesuai konteks)
 
@@ -1465,6 +1518,14 @@
             lbImg.src = fullSizeUrl(file);
             lbImg.alt = file.name;
             lbCap.textContent = file.name;
+            updateLbSelectButton(file.id);
+        }
+
+        // Sinkronkan tampilan tombol "Pilih Foto Ini" dengan status seleksi foto yang sedang tampil.
+        function updateLbSelectButton(id) {
+            const isSelected = selected.has(id);
+            lbSelectBtn.classList.toggle("is-selected", isSelected);
+            lbSelectText.textContent = isSelected ? "Foto Ini Dipilih" : "Pilih Foto Ini";
         }
 
         function closeLightbox() {
@@ -1479,6 +1540,13 @@
             lbPos = (lbPos + dir + lbList.length) % lbList.length;
             renderLightbox();
         }
+
+        lbSelectBtn.addEventListener("click", () => {
+            const file = lbList[lbPos];
+            if (!file) return;
+            toggleSelect(file.id);
+            updateLbSelectButton(file.id);
+        });
 
         document.getElementById("lbClose").addEventListener("click", closeLightbox);
         document.getElementById("lbPrev").addEventListener("click", (e) => { e.stopPropagation(); moveLightbox(-1); });
