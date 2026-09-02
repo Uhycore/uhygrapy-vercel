@@ -44,6 +44,14 @@
             --maxw: 1500px;
             --nav-h: 58px;
             /* tinggi bar nav sticky (scroll offset) */
+
+            /* ===== MUSIC-REACTIVE ===== */
+            /* Di-update tiap frame oleh JS (initMusicReactive) dari data frekuensi
+               audio yang sedang diputar. 0 = diam, 1 = puncak beat.
+               --pulse = band bass (dipakai buat glow/scale besar)
+               --pulse-mid = band mid/treble (dipakai buat detail kecil) */
+            --pulse: 0;
+            --pulse-mid: 0;
         }
 
         * {
@@ -81,6 +89,32 @@
             max-width: var(--maxw);
             margin: 0 auto;
             padding: 0 26px;
+        }
+
+        /* teks disembunyikan visual tapi tetap kebaca screen reader */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Kanvas partikel full halaman — fixed nutupin seluruh layar dari atas
+           sampai bawah, tetap kelihatan sepanjang scroll. Diam-pelan (idle) saat
+           musik belum diputar, makin hidup & cepat mengikuti bass saat main. */
+        #bgParticles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
         /* ============ HEADER ============ */
@@ -192,48 +226,227 @@
             border-color: var(--wa);
         }
 
-        /* musik playing: pakai aksen merah (state) */
-        .btn-music.playing {
-            border-color: var(--accent);
-            color: var(--accent);
+        /* ============ MUSIC PLAYER (widget, center di lebar penuh page) ============ */
+        .music-player {
+            width: min(380px, 100%);
+            margin: 30px auto 34px;
+            padding: 18px 20px 16px;
+            border-radius: 26px;
+            border: 1px solid var(--line);
+            background:
+                radial-gradient(120% 140% at 25% 15%,
+                    color-mix(in srgb, var(--accent) 30%, transparent) 0%,
+                    transparent 60%),
+                var(--bg-soft);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: border-color .3s ease;
         }
 
-        .eq {
-            display: inline-flex;
-            align-items: flex-end;
-            gap: 2px;
-            width: 15px;
-            height: 13px;
+        /* saat main: border & glow ring ikut napas bass (--pulse) */
+        .music-player.playing {
+            border-color: var(--accent-dim);
+            box-shadow: 0 0 calc(6px + 26px * var(--pulse)) 0 color-mix(in srgb, var(--accent) 30%, transparent);
         }
 
-        .eq span {
-            width: 3px;
-            background: currentColor;
-            height: 30%;
-            border-radius: 2px;
+        /* label ajakan main musik — teks kelihatan, ganti pesan sesuai status */
+        .mp-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: .04em;
+            color: var(--muted);
         }
 
-        .btn-music.playing .eq span {
-            animation: bounce .9s ease-in-out infinite;
+        .music-player.playing .mp-label {
+            color: var(--text);
         }
 
-        .btn-music.playing .eq span:nth-child(2) {
-            animation-delay: .2s;
+        /* ---- baris atas: mundur / play-pause / maju ---- */
+        .mp-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
         }
 
-        .btn-music.playing .eq span:nth-child(3) {
-            animation-delay: .4s;
+        .mp-skip {
+            flex: none;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            padding: 0;
+            transition: color .2s ease;
         }
 
-        @keyframes bounce {
+        .mp-skip:hover {
+            color: var(--text);
+        }
 
-            0%,
-            100% {
-                height: 30%;
-            }
+        .mp-skip:focus-visible,
+        .mp-btn:focus-visible,
+        .mp-vol:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: 6px;
+        }
 
-            50% {
-                height: 100%;
+        .mp-skip svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .mp-btn {
+            flex: none;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .mp-btn svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .mp-pause {
+            display: none;
+        }
+
+        .music-player.playing .mp-play {
+            display: none;
+        }
+
+        .music-player.playing .mp-pause {
+            display: block;
+        }
+
+        /* ---- baris bawah: seek bar + tombol volume ---- */
+        .mp-seek-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mp-seek {
+            flex: 1;
+            appearance: none;
+            -webkit-appearance: none;
+            height: 3px;
+            border-radius: 999px;
+            background: var(--line);
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* thumb dibikin transparan (nggak ada bulatan kelihatan), progress
+           bar-nya sendiri yang kasih tau posisi lagu via --fill di bawah.
+           Ukuran tetap dijaga (bukan 0) biar area drag-nya masih nyaman dipegang. */
+        .mp-seek::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 999px;
+            background: transparent;
+            box-shadow: none;
+            cursor: pointer;
+        }
+
+        .mp-seek::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border: none;
+            border-radius: 999px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .mp-seek::-webkit-slider-runnable-track {
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(to right, var(--accent) var(--fill, 0%), var(--line) 0);
+        }
+
+        .mp-seek::-moz-range-progress {
+            height: 3px;
+            border-radius: 999px;
+            background: var(--accent);
+        }
+
+        .mp-vol {
+            flex: none;
+            width: 22px;
+            height: 22px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            padding: 0;
+            transition: color .2s ease;
+        }
+
+        .mp-vol:hover {
+            color: var(--text);
+        }
+
+        .mp-vol svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .mp-vol-off {
+            display: none;
+        }
+
+        .mp-vol.muted .mp-vol-on {
+            display: none;
+        }
+
+        .mp-vol.muted .mp-vol-off {
+            display: block;
+        }
+
+        /* ===== Cursor glow reaktif musik ===== */
+        .cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 26px;
+            height: 26px;
+            margin: -13px 0 0 -13px;
+            border-radius: 999px;
+            background: radial-gradient(circle, color-mix(in srgb, var(--accent) 55%, transparent) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transform: translate(0, 0) scale(1);
+            transition: opacity .3s ease;
+            will-change: transform;
+        }
+
+        .cursor-glow.visible {
+            opacity: .8;
+        }
+
+        @media (hover: none) {
+
+            /* nggak ada mouse beneran (touch) -> jangan tampilkan cursor glow */
+            .cursor-glow {
+                display: none;
             }
         }
 
@@ -252,10 +465,12 @@
             letter-spacing: -.025em;
         }
 
-        /* "cahayanya" -> tetap aksen merah, sesuai keputusan */
+        /* "cahayanya" -> tetap aksen merah, sesuai keputusan.
+           text-shadow-nya sekarang "bernapas" mengikuti --pulse (band bass). */
         .hero h1 em {
             font-style: italic;
             color: var(--accent);
+            text-shadow: 0 0 calc(4px + 22px * var(--pulse)) color-mix(in srgb, var(--accent) 65%, transparent);
         }
 
         .hero p {
@@ -329,6 +544,7 @@
 
         .nav a.active::after {
             transform: scaleX(1);
+            box-shadow: 0 0 calc(2px + 9px * var(--pulse)) var(--accent);
         }
 
         /* ============ SECTION ============ */
@@ -425,15 +641,14 @@
             background: var(--bg-soft);
             cursor: zoom-in;
             opacity: 0;
-            transform: translateY(8px);
-            animation: rise .5s ease forwards;
+            transition: opacity .6s ease;
         }
 
-        @keyframes rise {
-            to {
-                opacity: 1;
-                transform: none;
-            }
+        /* fade in saat masuk viewport pas discroll, fade out lagi pas keluar
+           viewport (class ditoggle JS via IntersectionObserver). Ringan karena
+           cuma transisi opacity, bukan animasi transform looping terus-menerus. */
+        figure.card.card-visible {
+            opacity: 1;
         }
 
         figure.card img {
@@ -445,6 +660,14 @@
 
         figure.card:hover img {
             transform: scale(1.03);
+        }
+
+        /* Glow reaktif musik — hanya pada card yang lagi kelihatan di layar
+           (ditandai IntersectionObserver) dan hanya saat lagu diputar.
+           Pakai box-shadow, bukan transform, supaya tidak rebutan dengan
+           animasi masuk "rise" di atas. */
+        figure.card.in-view {
+            box-shadow: 0 0 calc(3px + 20px * var(--pulse)) 0 color-mix(in srgb, var(--accent) 45%, transparent);
         }
 
         figure.card figcaption {
@@ -1038,11 +1261,27 @@
                 opacity: 1;
                 transform: none;
             }
+
+            /* matikan total seluruh layer reaktif-musik: partikel, cursor glow,
+               dan semua glow yang dipompa lewat --pulse */
+            #bgParticles,
+            .cursor-glow {
+                display: none !important;
+            }
+
+            .hero h1 em,
+            .nav a.active::after,
+            .music-player.playing,
+            figure.card.in-view {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
+    <canvas id="bgParticles" aria-hidden="true"></canvas>
     <div class="wrap">
 
         <!-- ================= HEADER ================= -->
@@ -1069,10 +1308,6 @@
                     </svg>
                     Pilih Foto
                 </a>
-                <button class="btn btn-music" id="musicBtn" aria-pressed="false" aria-label="Putar musik latar">
-                    <span class="eq" aria-hidden="true"><span></span><span></span><span></span></span>
-                    <span id="musicLabel">Music</span>
-                </button>
                 <a class="btn btn-wa" id="waBtn" target="_blank" rel="noopener" href="#">
                     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path
@@ -1085,10 +1320,48 @@
 
         <!-- ================= HERO ================= -->
         <section class="hero">
-            <h1>Setiap momen punya <em>cahayanya</em> sendiri.</h1>
-            <p>Portofolio karya Uhygrapy — dari cosplay sampai sinematografi &amp; dokumentasi kegiatan. Gulir ke bawah,
-                telusuri tiap kategori.</p>
+            <h1>Bisa booking sekarang <em>buktikan sendiri</em> hasilnya.</h1>
+            <p>Sidoarjo Barat - cosplayer, casual, engagement, prewedding, yudisium, wisuda dan lain-lain. TAK
+                BUDALNO!!!..</p>
         </section>
+
+        <!-- ================= MUSIC PLAYER (center, lebar penuh halaman) ================= -->
+        <div class="music-player" id="musicPlayer">
+            <span id="musicLabel" class="mp-label">MAINKAN MUSIKNYA!!! BIAR ENAK KITA</span>
+            <div class="mp-controls">
+                <button class="mp-skip" id="mpPrev" aria-label="Mundur 10 detik">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M11 18V6l-8.5 6zM20 18V6l-8.5 6z" />
+                    </svg>
+                </button>
+                <button class="mp-btn" id="musicBtn" aria-pressed="false" aria-label="Putar musik latar">
+                    <svg class="mp-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <svg class="mp-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                    </svg>
+                </button>
+                <button class="mp-skip" id="mpNext" aria-label="Maju 10 detik">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M13 6v12l8.5-6zM4 6v12l8.5-6z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="mp-seek-row">
+                <input type="range" class="mp-seek" id="mpSeek" min="0" max="100" value="0" step="0.1"
+                    aria-label="Posisi lagu" />
+                <button class="mp-vol" id="mpVol" aria-label="Bisukan atau nyalakan suara">
+                    <svg class="mp-vol-on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M4 9v6h4l5 5V4L8 9H4zm11.5 3a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 15.5 12z" />
+                    </svg>
+                    <svg class="mp-vol-off" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M4 9v6h4l5 5V4L8 9H4zm14.7-1.7-1.4 1.4L19 10.4l-1.7 1.7 1.4 1.4L20.4 12l1.7 1.7 1.4-1.4L21.8 10.6l1.7-1.7-1.4-1.4-1.7 1.7z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
 
         <!-- ================= NAV ================= -->
         <nav class="nav" id="nav" aria-label="Navigasi bagian"></nav>
@@ -1097,7 +1370,7 @@
         <main id="content"></main>
 
         <footer>
-            <span>© <span id="yr"></span> Uhygrapy — Mojokerto · Gresik · Sidoarjo · Surabaya</span>
+            <span>© <span id="yr"></span> Uhygrapy — Sidoarjo · Surabaya</span>
             <span><a href="https://instagram.com/uhycore" target="_blank" rel="noopener">@uhycore</a></span>
         </footer>
     </div>
@@ -1111,8 +1384,13 @@
         <div class="lb-cap" id="lbCap"></div>
     </div>
 
-    <!-- Musik latar. Ganti src ke file lagumu (mis. music/music.mp3). -->
-    <audio id="audio" loop preload="none" src="music/music.mp3"></audio>
+    <!-- Cursor glow reaktif musik. Otomatis disembunyikan di device touch/no-hover. -->
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+    <!-- Musik latar. Ganti src ke file lagumu (mis. music/music.mp3).
+         preload="metadata" biar durasi lagu kebaca lebih awal (buat seek bar),
+         TANPA nge-download seluruh file & TANPA autoplay. -->
+    <audio id="audio" loop preload="metadata" src="music/music.mp3"></audio>
 
     <script>
         /* =====================================================================
@@ -1121,7 +1399,7 @@
 
         /* --- 1) NOMOR WHATSAPP (format 62, tanpa + dan tanpa 0) --- */
         const WA_NUMBER = "6285647234364";
-        const WA_MESSAGE = "Halo Uhygrapy! Aku mau tanya soal jasa foto 📸";
+        const WA_MESSAGE = "Halo Uhygrapy! Aku mau tanya soal jasa foto";
 
         /* --- 1b) PROFIL / TENTANG SAYA ---
            photos : 1–3 foto diri (taruh di folder images/). Foto pertama = besar (tall).
@@ -1129,8 +1407,8 @@
         const PROFILE = {
             eyebrow: "Profil",
             heading: "Di balik lensa Uhygrapy.",
-            bio: "Halo! Aku fotografer sekaligus videografer asal Surabaya yang jatuh cinta sama cerita di balik setiap frame. Dari wisuda, lamaran, cosplay, sampai dokumentasi acara — fokusku satu: menangkap momen dengan rasa sinematik yang hangat dan personal. Buat aku, foto yang bagus itu bukan cuma tajam, tapi kerasa.",
-            meta: "Berbasis di Sidoarjo · Melayani Mojokerto, Gresik, Surabaya, dan sekitarnya",
+            bio: "Halo! Aku fotografer wes mek ngunu tok",
+            meta: "Berbasis di Sidoarjo · Melayani Sidoarjo, Surabaya, dan sekitarnya",
             ig: "uhycore",
             photos: [
                 "images/profile1.jpg",
@@ -1328,7 +1606,7 @@
             items.forEach((p, idx) => {
                 const fig = document.createElement("figure");
                 fig.className = "card";
-                fig.style.animationDelay = ((idx % 8) * 0.05) + "s";
+                fig.style.transitionDelay = ((idx % 8) * 0.05) + "s";
                 fig.innerHTML = `
                     <img src="${esc(p.src)}" alt="${esc(p.title)} — ${esc(label)}" loading="lazy" />
                     <figcaption><span class="cat">${esc(label)}</span><br>${esc(p.title)}</figcaption>`;
@@ -1637,30 +1915,259 @@
         })();
 
         /* =====================================================================
-           ================  MUSIK  ===========================================
+           ================  FOTO: fade in/out saat masuk-keluar viewport  ====
+           Ringan (cuma toggle class + transisi opacity), gantiin animasi
+           melayang-layang yang lebih berat sebelumnya.
+           ===================================================================== */
+        (function fadeCardsOnScroll() {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(en => {
+                    en.target.classList.toggle("card-visible", en.isIntersecting);
+                });
+            }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+            document.querySelectorAll("figure.card").forEach(c => io.observe(c));
+        })();
+
+        /* =====================================================================
+           ================  MUSIK + LAYER ANIMASI REAKTIF  ===================
            ===================================================================== */
         const audio = document.getElementById("audio");
+        const musicPlayerEl = document.getElementById("musicPlayer");
         const musicBtn = document.getElementById("musicBtn");
         const musicLabel = document.getElementById("musicLabel");
+        const mpPrev = document.getElementById("mpPrev");
+        const mpNext = document.getElementById("mpNext");
+        const mpSeek = document.getElementById("mpSeek");
+        const mpVol = document.getElementById("mpVol");
+
+        const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const IS_SMALL = window.innerWidth < 600;
+
         musicBtn.addEventListener("click", () => {
             if (audio.paused) {
                 audio.play().then(() => {
-                    musicBtn.classList.add("playing");
+                    musicPlayerEl.classList.add("playing");
                     musicBtn.setAttribute("aria-pressed", "true");
-                    musicLabel.textContent = "Playing";
+                    musicLabel.textContent = "Sedang diputar";
+                    // AudioContext HARUS dibuat/di-resume dari dalam user gesture
+                    // (kebijakan browser) — makanya dipanggil di sini, bukan di awal load.
+                    if (!REDUCE_MOTION) initMusicReactive();
                 }).catch(() => {
-                    musicLabel.textContent = "No file";
-                    setTimeout(() => musicLabel.textContent = "Music", 1800);
+                    musicLabel.textContent = "File musik belum ada";
+                    setTimeout(() => musicLabel.textContent = "Mainkan musiknya", 1800);
                 });
             } else {
                 audio.pause();
-                musicBtn.classList.remove("playing");
+                musicPlayerEl.classList.remove("playing");
                 musicBtn.setAttribute("aria-pressed", "false");
-                musicLabel.textContent = "Music";
+                musicLabel.textContent = "Mainkan musiknya";
             }
         });
 
+        /* ---- mundur / maju 10 detik ---- */
+        mpPrev.addEventListener("click", () => {
+            audio.currentTime = Math.max(0, audio.currentTime - 10);
+        });
+        mpNext.addEventListener("click", () => {
+            if (audio.duration) audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+        });
+
+        /* ---- seek bar: geser buat lompat posisi, otomatis update saat lagu jalan ---- */
+        let userSeeking = false;
+        mpSeek.addEventListener("input", () => {
+            userSeeking = true;
+            if (audio.duration) audio.currentTime = (mpSeek.value / 100) * audio.duration;
+            mpSeek.style.setProperty("--fill", mpSeek.value + "%");
+        });
+        mpSeek.addEventListener("change", () => { userSeeking = false; });
+        audio.addEventListener("timeupdate", () => {
+            if (userSeeking || !audio.duration) return;
+            const pct = (audio.currentTime / audio.duration) * 100;
+            mpSeek.value = pct;
+            mpSeek.style.setProperty("--fill", pct + "%");
+        });
+
+        /* ---- tombol volume: toggle bisu ---- */
+        mpVol.addEventListener("click", () => {
+            audio.muted = !audio.muted;
+            mpVol.classList.toggle("muted", audio.muted);
+        });
+
         document.getElementById("yr").textContent = new Date().getFullYear();
+
+        /* ---------------------------------------------------------------
+           initMusicReactive()
+           Nyalain sekali (guard di bawah) saat user pertama kali klik play.
+           Bikin AnalyserNode nempel ke <audio>, lalu jalanin satu render
+           loop yang dipakai bareng buat: eq bar, glow --pulse, partikel
+           hero, dan cursor glow. Semua elemen ini juga tetap "hidup" pelan
+           (idle) walau musik lagi pause, biar nggak kaku pas berhenti.
+           --------------------------------------------------------------- */
+        let reactiveInitialized = false;
+
+        function initMusicReactive() {
+            if (reactiveInitialized) return;
+            reactiveInitialized = true;
+
+            let analyser, freqData, bufferLength;
+            let audioReady = false;
+
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                const source = ctx.createMediaElementSource(audio);
+                analyser = ctx.createAnalyser();
+                analyser.fftSize = IS_SMALL ? 64 : 128; // kecil = ringan, cukup buat 2-3 band
+                analyser.smoothingTimeConstant = 0.75;
+                bufferLength = analyser.frequencyBinCount;
+                freqData = new Uint8Array(bufferLength);
+
+                source.connect(analyser);
+                analyser.connect(ctx.destination); // penting: biar suara tetap kedengeran
+
+                // Beberapa browser mulai AudioContext dalam status "suspended"
+                if (ctx.state === "suspended") ctx.resume();
+
+                audioReady = true;
+                musicPlayerEl.classList.add("reactive"); // matikan CSS bounce statis, JS ambil alih
+            } catch (err) {
+                // Web Audio API tidak didukung / gagal — biarkan fallback CSS bounce
+                // yang sudah ada tetap jalan, animasi lain tetap di mode idle.
+                audioReady = false;
+            }
+
+            /* ---------- setup partikel full-page (canvas) ----------
+               Beda dari versi sebelumnya (yang cuma di area hero): kanvas ini
+               position:fixed nutupin seluruh viewport, jadi partikel kelihatan
+               melayang dari atas sampai bawah layar, di scroll posisi manapun. */
+            const canvas = document.getElementById("bgParticles");
+            const pctx = canvas ? canvas.getContext("2d") : null;
+            let particles = [];
+            const PARTICLE_COUNT = IS_SMALL ? 22 : 46;
+
+            function sizeCanvas() {
+                if (!canvas) return;
+                canvas.width = window.innerWidth * devicePixelRatio;
+                canvas.height = window.innerHeight * devicePixelRatio;
+                canvas.style.width = window.innerWidth + "px";
+                canvas.style.height = window.innerHeight + "px";
+            }
+            function makeParticles() {
+                if (!canvas) return;
+                const w = canvas.width, h = canvas.height;
+                particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+                    x: Math.random() * w,
+                    // tersebar merata dari atas sampai bawah sejak awal
+                    // (bukan cuma nongol dari bawah), biar full-page langsung kerasa.
+                    y: Math.random() * h,
+                    r: (1 + Math.random() * 2) * devicePixelRatio,
+                    speed: (0.15 + Math.random() * 0.35) * devicePixelRatio,
+                    drift: (Math.random() - 0.5) * 0.3 * devicePixelRatio,
+                    baseAlpha: 0.22 + Math.random() * 0.32,
+                }));
+            }
+            if (pctx) {
+                sizeCanvas();
+                makeParticles();
+                window.addEventListener("resize", () => { sizeCanvas(); makeParticles(); }, { passive: true });
+            }
+
+            /* ---------- setup IntersectionObserver: tandai card yg lagi kelihatan ---------- */
+            const cardIO = new IntersectionObserver((entries) => {
+                entries.forEach(en => en.target.classList.toggle("in-view", en.isIntersecting));
+            }, { rootMargin: "0px 0px -10% 0px", threshold: 0.15 });
+            function observeCards() {
+                document.querySelectorAll("figure.card:not([data-io])").forEach(c => {
+                    c.dataset.io = "1";
+                    cardIO.observe(c);
+                });
+            }
+            observeCards();
+            // Konten kategori dirender lebih dulu di atas, jadi cukup observe sekali di sini;
+            // dipanggil ulang tiap frame pertama aman-aman saja karena guarded dengan data-io.
+
+            /* ---------- cursor glow (skip di device tanpa mouse asli) ---------- */
+            const cursorGlow = document.getElementById("cursorGlow");
+            const hasHover = window.matchMedia("(hover: hover)").matches;
+            let cursorX = 0, cursorY = 0, cursorSet = false;
+            if (cursorGlow && hasHover) {
+                window.addEventListener("mousemove", (e) => {
+                    cursorX = e.clientX; cursorY = e.clientY;
+                    if (!cursorSet) { cursorGlow.classList.add("visible"); cursorSet = true; }
+                }, { passive: true });
+            }
+
+            /* ---------- render loop ---------- */
+            let curBass = 0, curMid = 0, curTreble = 0;
+            const IDLE_LEVEL = 0.12; // gerakan minim tetap ada walau musik pause
+
+            function readBands() {
+                analyser.getByteFrequencyData(freqData);
+                const third = Math.max(1, Math.floor(bufferLength / 3));
+                let bassSum = 0, midSum = 0, trebleSum = 0;
+                for (let i = 0; i < third; i++) bassSum += freqData[i];
+                for (let i = third; i < third * 2; i++) midSum += freqData[i];
+                for (let i = third * 2; i < bufferLength; i++) trebleSum += freqData[i];
+                const bass = bassSum / third / 255;
+                const mid = midSum / third / 255;
+                const treble = trebleSum / (bufferLength - third * 2 || 1) / 255;
+                return { bass, mid, treble };
+            }
+
+            function tick() {
+                const playing = audioReady && !audio.paused;
+
+                if (playing) {
+                    const { bass, mid, treble } = readBands();
+                    // sedikit kurva biar lebih "nendang" secara visual, lalu smoothing
+                    curBass += ((Math.pow(bass, 0.85)) - curBass) * 0.35;
+                    curMid += ((Math.pow(mid, 0.85)) - curMid) * 0.35;
+                    curTreble += (treble - curTreble) * 0.35;
+                } else {
+                    // idle: pelan-pelan turun ke level ambient rendah, bukan langsung 0
+                    curBass += (IDLE_LEVEL - curBass) * 0.03;
+                    curMid += (IDLE_LEVEL * 0.7 - curMid) * 0.03;
+                    curTreble += (IDLE_LEVEL * 0.5 - curTreble) * 0.03;
+                }
+
+                document.documentElement.style.setProperty("--pulse", curBass.toFixed(3));
+                document.documentElement.style.setProperty("--pulse-mid", curMid.toFixed(3));
+
+                // partikel hero — selalu jalan (idle ambient + makin hidup saat playing)
+                if (pctx && canvas.width > 0) {
+                    pctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.y -= p.speed * (1 + curBass * 2.2);
+                        p.x += p.drift;
+                        if (p.y < -10) {
+                            p.y = canvas.height + 10;
+                            p.x = Math.random() * canvas.width;
+                        }
+                        const alpha = p.baseAlpha * (0.5 + curBass * 0.9);
+                        pctx.beginPath();
+                        pctx.fillStyle = `rgba(139,30,30,${Math.min(alpha, 0.9)})`;
+                        pctx.arc(p.x, p.y, p.r * (1 + curBass * 0.6), 0, Math.PI * 2);
+                        pctx.fill();
+                    });
+                }
+
+                // cursor glow — sedikit membesar mengikuti bass
+                if (cursorGlow && hasHover && cursorSet) {
+                    const scale = 1 + curBass * 0.9;
+                    cursorGlow.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(${scale})`;
+                }
+
+                // pastikan card baru yang muncul (mis. lazy render) ikut ke-observe
+                observeCards();
+
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // Kalau device sangat kecil / reduce-motion, tetap sediakan idle partikel super ringan
+        // dengan langsung memicu setup begitu user pertama kali menekan tombol musik (di atas).
+        // Tidak dipanggil di awal load supaya AudioContext hanya dibuat via user gesture.
     </script>
 </body>
 
