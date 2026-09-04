@@ -117,6 +117,86 @@
             pointer-events: none;
         }
 
+        /* ============ PRELOADER ============ */
+        /* Mengunci scroll selama aset (foto profil, galeri, sertifikat, logo
+           partner) masih diunduh, supaya pengunjung tidak "kepotong" konten
+           yang belum siap. Dibuka lagi lewat JS (preloadAssets) setelah semua
+           gambar selesai/​gagal dimuat, atau setelah batas waktu jaga-jaga. */
+        html.is-loading,
+        html.is-loading body {
+            overflow: hidden;
+            height: 100%;
+        }
+
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            background: var(--bg);
+            transition: opacity .5s ease, visibility .5s ease;
+        }
+
+        #preloader.preloader-done {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .pl-mark {
+            width: 46px;
+            height: 46px;
+            color: var(--text);
+            opacity: .9;
+            animation: spin 1.6s linear infinite;
+        }
+
+        .pl-label {
+            font-size: 11px;
+            letter-spacing: .26em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .pl-bar-track {
+            width: min(220px, 60vw);
+            height: 3px;
+            border-radius: 999px;
+            background: var(--line);
+            overflow: hidden;
+        }
+
+        .pl-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 999px;
+            transition: width .25s ease;
+        }
+
+        .pl-pct {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+            letter-spacing: .02em;
+        }
+
+        .pl-count {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pl-mark {
+                animation: none;
+            }
+        }
+
         /* ============ HEADER ============ */
         header {
             display: flex;
@@ -1312,6 +1392,21 @@
 </head>
 
 <body>
+    <!-- ================= PRELOADER ================= -->
+    <div id="preloader" role="status" aria-live="polite">
+        <svg class="pl-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5"
+            aria-hidden="true">
+            <circle cx="50" cy="50" r="40" />
+            <path d="M50 10 L68 41 H32 Z M90 50 L59 68 V32 Z M50 90 L32 59 H68 Z M10 50 L41 32 V68 Z" />
+        </svg>
+        <span class="pl-label">Menyiapkan galeri</span>
+        <div class="pl-bar-track">
+            <div class="pl-bar-fill" id="plBarFill"></div>
+        </div>
+        <span class="pl-pct" id="plPercent">0%</span>
+        <span class="pl-count" id="plCount">0 / 0</span>
+    </div>
+
     <canvas id="bgParticles" aria-hidden="true"></canvas>
     <div class="wrap">
 
@@ -1606,6 +1701,83 @@
             { logo: "partner/imajirent.jpg", name: "Imajirent Surabaya" },
             { logo: "partner/indoCEISS.png", name: "Indonesia Center for Environmental Sustainability Studies" },
         ];
+
+        /* --- 7) PRELOADER ---
+           Preload SEMUA GAMBAR (foto profil, seluruh galeri foto, sertifikat,
+           logo partner) sebelum halaman utama ditampilkan ke pengunjung.
+
+           CATATAN JUJUR: video (vidio/cine1.mp4 dkk) & musik latar (music/music.mp3)
+           SENGAJA TIDAK ikut didownload penuh di sini. File video/audio biasanya
+           berukuran puluhan-ratusan kali lebih besar dari foto — kalau ikut
+           ditunggu sebelum halaman dibuka, loading awal bisa jadi sangat lama,
+           terutama di koneksi seluler, dan itu pengalaman yang buruk buat
+           pengunjung. Video tetap pakai preview ringan (metadata/frame pertama,
+           seperti sebelumnya) dan musik baru diunduh saat tombol play ditekan.
+           Kalau kamu memang mau video & musik ikut didownload penuh sebelum
+           halaman kebuka, itu bisa ditambahkan, tapi kasih tahu dulu — sengaja
+           saya pisahkan supaya kamu bisa putuskan sendiri trade-off-nya. */
+        (function preloadAssets() {
+            const rootEl = document.documentElement;
+            const preloaderEl = document.getElementById("preloader");
+            const barFill = document.getElementById("plBarFill");
+            const plPercent = document.getElementById("plPercent");
+            const plCount = document.getElementById("plCount");
+
+            rootEl.classList.add("is-loading");
+
+            const assetUrls = [
+                ...(PROFILE.photos || []).filter(Boolean),
+                ...PHOTOS.map(p => p.src),
+                ...CERTS.filter(c => c.image).map(c => c.image),
+                ...PARTNERS.filter(p => p.logo).map(p => p.logo),
+            ];
+
+            const total = assetUrls.length;
+            let loaded = 0;
+
+            function updateProgress() {
+                const pct = total ? Math.round((loaded / total) * 100) : 100;
+                if (barFill) barFill.style.width = pct + "%";
+                if (plPercent) plPercent.textContent = pct + "%";
+                if (plCount) plCount.textContent = loaded + " / " + total;
+            }
+
+            function finish() {
+                rootEl.classList.remove("is-loading");
+                if (preloaderEl) {
+                    preloaderEl.classList.add("preloader-done");
+                    setTimeout(() => { preloaderEl.style.display = "none"; }, 550);
+                }
+            }
+
+            updateProgress();
+
+            if (total === 0) { finish(); return; }
+
+            // Jaga-jaga: kalau ada file yang hilang/koneksi lambat banget, jangan
+            // sampai pengunjung nyangkut selamanya di layar loading.
+            const MAX_WAIT_MS = 12000;
+            let settled = false;
+            const failSafe = setTimeout(() => {
+                if (!settled) { settled = true; finish(); }
+            }, MAX_WAIT_MS);
+
+            assetUrls.forEach(src => {
+                const img = new Image();
+                const onDone = () => {
+                    loaded++;
+                    updateProgress();
+                    if (loaded >= total && !settled) {
+                        settled = true;
+                        clearTimeout(failSafe);
+                        finish();
+                    }
+                };
+                img.onload = onDone;
+                img.onerror = onDone; // file gagal dimuat tetap dihitung, jangan nge-block halaman
+                img.src = src;
+            });
+        })();
 
         /* =====================================================================
            ================  LOGIKA RENDER (jarang perlu disentuh)  ============
