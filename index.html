@@ -1762,13 +1762,29 @@
 
             if (total === 0) { finish(); return; }
 
-            // Jaga-jaga: kalau ada file yang hilang/koneksi lambat banget, jangan
-            // sampai pengunjung nyangkut selamanya di layar loading.
-            const MAX_WAIT_MS = 12000;
+            // Skala timeout ke jumlah aset: makin banyak gambar, makin lama toleransinya.
+            // Ini cuma jaga-jaga kalau ADA file yang benar-benar gagal/hilang (404, dsb),
+            // bukan buat "buru-buru" nutup preloader saat koneksi cuma lambat.
+            const MAX_WAIT_MS = Math.max(20000, total * 450);
             let settled = false;
+
             const failSafe = setTimeout(() => {
                 if (!settled) { settled = true; finish(); }
             }, MAX_WAIT_MS);
+
+            // Tombol "Lewati" muncul setelah 6 detik — biar user yang koneksinya
+            // memang lambat tetap punya kontrol, tanpa preloader nutup sendiri diam-diam.
+            let skipBtn;
+            const skipTimer = setTimeout(() => {
+                if (settled || !preloaderEl) return;
+                skipBtn = document.createElement("button");
+                skipBtn.textContent = "Lewati, buka sekarang";
+                skipBtn.style.cssText = "margin-top:6px;background:none;border:1px solid var(--line);color:var(--muted);font-size:11px;padding:6px 14px;border-radius:999px;cursor:pointer;font-family:inherit;";
+                skipBtn.addEventListener("click", () => {
+                    if (!settled) { settled = true; clearTimeout(failSafe); finish(); }
+                });
+                preloaderEl.appendChild(skipBtn);
+            }, 6000);
 
             assetUrls.forEach(src => {
                 const img = new Image();
@@ -1778,11 +1794,12 @@
                     if (loaded >= total && !settled) {
                         settled = true;
                         clearTimeout(failSafe);
+                        clearTimeout(skipTimer);
                         finish();
                     }
                 };
                 img.onload = onDone;
-                img.onerror = onDone; // file gagal dimuat tetap dihitung, jangan nge-block halaman
+                img.onerror = onDone;
                 img.src = src;
             });
         })();
