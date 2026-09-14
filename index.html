@@ -44,14 +44,6 @@
             --maxw: 1500px;
             --nav-h: 58px;
             /* tinggi bar nav sticky (scroll offset) */
-
-            /* ===== MUSIC-REACTIVE ===== */
-            /* Di-update tiap frame oleh JS (initMusicReactive) dari data frekuensi
-               audio yang sedang diputar. 0 = diam, 1 = puncak beat.
-               --pulse = band bass (dipakai buat glow/scale besar)
-               --pulse-mid = band mid/treble (dipakai buat detail kecil) */
-            --pulse: 0;
-            --pulse-mid: 0;
         }
 
         * {
@@ -104,24 +96,11 @@
             border: 0;
         }
 
-        /* Kanvas partikel full halaman — fixed nutupin seluruh layar dari atas
-           sampai bawah, tetap kelihatan sepanjang scroll. Diam-pelan (idle) saat
-           musik belum diputar, makin hidup & cepat mengikuti bass saat main. */
-        #bgParticles {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            display: block;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
         /* ============ PRELOADER ============ */
         /* Mengunci scroll selama aset (foto profil, galeri, sertifikat, logo
            partner) masih diunduh, supaya pengunjung tidak "kepotong" konten
            yang belum siap. Dibuka lagi lewat JS (preloadAssets) setelah semua
-           gambar selesai/​gagal dimuat, atau setelah batas waktu jaga-jaga. */
+           gambar selesai/gagal dimuat, atau setelah batas waktu jaga-jaga. */
         html.is-loading,
         html.is-loading body {
             overflow: hidden;
@@ -285,7 +264,6 @@
             border-color: var(--accent-dim);
         }
 
-        /* hover state: aksen */
         .btn:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 2px;
@@ -306,230 +284,6 @@
             border-color: var(--wa);
         }
 
-        /* ============ MUSIC PLAYER (widget, center di lebar penuh page) ============ */
-        .music-player {
-            width: min(380px, 100%);
-            margin: 30px auto 34px;
-            padding: 18px 20px 16px;
-            border-radius: 26px;
-            border: 1px solid var(--line);
-            background:
-                radial-gradient(120% 140% at 25% 15%,
-                    color-mix(in srgb, var(--accent) 30%, transparent) 0%,
-                    transparent 60%),
-                var(--bg-soft);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            transition: border-color .3s ease;
-        }
-
-        /* saat main: border & glow ring ikut napas bass (--pulse) */
-        .music-player.playing {
-            border-color: var(--accent-dim);
-            box-shadow: 0 0 calc(6px + 26px * var(--pulse)) 0 color-mix(in srgb, var(--accent) 30%, transparent);
-        }
-
-        /* label ajakan main musik — teks kelihatan, ganti pesan sesuai status */
-        .mp-label {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: .04em;
-            color: var(--muted);
-        }
-
-        .music-player.playing .mp-label {
-            color: var(--text);
-        }
-
-        /* ---- baris atas: mundur / play-pause / maju ---- */
-        .mp-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .mp-skip {
-            flex: none;
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: transparent;
-            color: var(--muted);
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            padding: 0;
-            transition: color .2s ease;
-        }
-
-        .mp-skip:hover {
-            color: var(--text);
-        }
-
-        .mp-skip:focus-visible,
-        .mp-btn:focus-visible,
-        .mp-vol:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-            border-radius: 6px;
-        }
-
-        .mp-skip svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .mp-btn {
-            flex: none;
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: transparent;
-            color: var(--text);
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .mp-btn svg {
-            width: 26px;
-            height: 26px;
-        }
-
-        .mp-pause {
-            display: none;
-        }
-
-        .music-player.playing .mp-play {
-            display: none;
-        }
-
-        .music-player.playing .mp-pause {
-            display: block;
-        }
-
-        /* ---- baris bawah: seek bar + tombol volume ---- */
-        .mp-seek-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .mp-seek {
-            flex: 1;
-            appearance: none;
-            -webkit-appearance: none;
-            height: 3px;
-            border-radius: 999px;
-            background: var(--line);
-            cursor: pointer;
-            outline: none;
-        }
-
-        /* thumb dibikin transparan (nggak ada bulatan kelihatan), progress
-           bar-nya sendiri yang kasih tau posisi lagu via --fill di bawah.
-           Ukuran tetap dijaga (bukan 0) biar area drag-nya masih nyaman dipegang. */
-        .mp-seek::-webkit-slider-thumb {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 999px;
-            background: transparent;
-            box-shadow: none;
-            cursor: pointer;
-        }
-
-        .mp-seek::-moz-range-thumb {
-            width: 14px;
-            height: 14px;
-            border: none;
-            border-radius: 999px;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        .mp-seek::-webkit-slider-runnable-track {
-            height: 3px;
-            border-radius: 999px;
-            background: linear-gradient(to right, var(--accent) var(--fill, 0%), var(--line) 0);
-        }
-
-        .mp-seek::-moz-range-progress {
-            height: 3px;
-            border-radius: 999px;
-            background: var(--accent);
-        }
-
-        .mp-vol {
-            flex: none;
-            width: 22px;
-            height: 22px;
-            border: none;
-            background: transparent;
-            color: var(--muted);
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            padding: 0;
-            transition: color .2s ease;
-        }
-
-        .mp-vol:hover {
-            color: var(--text);
-        }
-
-        .mp-vol svg {
-            width: 17px;
-            height: 17px;
-        }
-
-        .mp-vol-off {
-            display: none;
-        }
-
-        .mp-vol.muted .mp-vol-on {
-            display: none;
-        }
-
-        .mp-vol.muted .mp-vol-off {
-            display: block;
-        }
-
-        /* ===== Cursor glow reaktif musik ===== */
-        .cursor-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 26px;
-            height: 26px;
-            margin: -13px 0 0 -13px;
-            border-radius: 999px;
-            background: radial-gradient(circle, color-mix(in srgb, var(--accent) 55%, transparent) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0;
-            transform: translate(0, 0) scale(1);
-            transition: opacity .3s ease;
-            will-change: transform;
-        }
-
-        .cursor-glow.visible {
-            opacity: .8;
-        }
-
-        @media (hover: none) {
-
-            /* nggak ada mouse beneran (touch) -> jangan tampilkan cursor glow */
-            .cursor-glow {
-                display: none;
-            }
-        }
-
         /* ============ HERO ============ */
         .hero {
             padding: 34px 0 40px;
@@ -545,12 +299,10 @@
             letter-spacing: -.025em;
         }
 
-        /* "cahayanya" -> tetap aksen merah, sesuai keputusan.
-           text-shadow-nya sekarang "bernapas" mengikuti --pulse (band bass). */
         .hero h1 em {
             font-style: italic;
             color: var(--accent);
-            text-shadow: 0 0 calc(4px + 22px * var(--pulse)) color-mix(in srgb, var(--accent) 65%, transparent);
+            text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent);
         }
 
         .hero p {
@@ -624,7 +376,6 @@
 
         .nav a.active::after {
             transform: scaleX(1);
-            box-shadow: 0 0 calc(2px + 9px * var(--pulse)) var(--accent);
         }
 
         /* ============ SECTION ============ */
@@ -725,8 +476,7 @@
         }
 
         /* fade in saat masuk viewport pas discroll, fade out lagi pas keluar
-           viewport (class ditoggle JS via IntersectionObserver). Ringan karena
-           cuma transisi opacity, bukan animasi transform looping terus-menerus. */
+           viewport (class ditoggle JS via IntersectionObserver). */
         figure.card.card-visible {
             opacity: 1;
         }
@@ -740,14 +490,6 @@
 
         figure.card:hover img {
             transform: scale(1.03);
-        }
-
-        /* Glow reaktif musik — hanya pada card yang lagi kelihatan di layar
-           (ditandai IntersectionObserver) dan hanya saat lagu diputar.
-           Pakai box-shadow, bukan transform, supaya tidak rebutan dengan
-           animasi masuk "rise" di atas. */
-        figure.card.in-view {
-            box-shadow: 0 0 calc(3px + 20px * var(--pulse)) 0 color-mix(in srgb, var(--accent) 45%, transparent);
         }
 
         figure.card figcaption {
@@ -798,7 +540,6 @@
             background: var(--accent);
         }
 
-        /* garis kecil: aksen */
         .empty-state p {
             margin: 0;
             font-size: 14px;
@@ -822,7 +563,6 @@
         }
 
         .vcard {
-            /* reset default <button>: browser paksa warna hitam & text center */
             width: 100%;
             text-align: left;
             color: var(--text);
@@ -842,7 +582,6 @@
             transform: translateY(-3px);
         }
 
-        /* hover: aksen */
         .vcard:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 2px;
@@ -866,7 +605,6 @@
             overflow: hidden;
         }
 
-        /* preview: gambar thumbnail ATAU frame pertama <video> */
         .vthumb img,
         .vthumb video {
             width: 100%;
@@ -894,14 +632,12 @@
             border: 1px solid rgba(255, 255, 255, .25);
             transition: background .2s ease;
             pointer-events: none;
-            /* biar klik selalu kena kartu */
         }
 
         .vcard:hover .play {
             background: color-mix(in srgb, var(--accent) 85%, black);
         }
 
-        /* hover: aksen */
         .play svg {
             width: 20px;
             height: 20px;
@@ -937,7 +673,6 @@
         }
 
         .ccard {
-            /* reset default <button> (kartu sertifikat jadi button saat ada gambar) */
             width: 100%;
             text-align: left;
             color: var(--text);
@@ -960,7 +695,6 @@
             transform: translateY(-3px);
         }
 
-        /* hover: aksen */
         .ccard.has-img:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 2px;
@@ -997,7 +731,6 @@
             opacity: .85;
         }
 
-        /* ikon piala: netral */
         .cph span {
             font-size: 12.5px;
             letter-spacing: .03em;
@@ -1008,7 +741,6 @@
         }
 
         .cmeta .cevent {
-            /* label kecil: aksen */
             font-size: 10px;
             letter-spacing: .2em;
             text-transform: uppercase;
@@ -1048,7 +780,6 @@
             border: 1px solid var(--line);
             border-radius: var(--radius);
             background: #fff;
-            /* chip putih seragam utk semua logo */
             display: grid;
             place-items: center;
             overflow: hidden;
@@ -1056,14 +787,11 @@
             transition: border-color .25s ease;
         }
 
-        /* placeholder (belum ada logo) tetap gelap biar teks nama kebaca */
         .plogo.placeholder {
             background: var(--bg-soft);
             padding: 18px;
         }
 
-        /* width/height 100% + contain = logo SELALU muat penuh, tak pernah kepotong
-           (max-height:100% tidak reliabel karena tinggi .plogo dari aspect-ratio) */
         .plogo img {
             width: 100%;
             height: 100%;
@@ -1130,9 +858,6 @@
             grid-row: 1 / 3;
         }
 
-        /* foto pertama = tall (kiri) */
-
-        /* 2 foto: sejajar, sama tinggi */
         .pf-count-2 .pf-photos {
             grid-template-rows: 360px;
         }
@@ -1141,7 +866,6 @@
             grid-row: 1 / 2;
         }
 
-        /* 1 foto: satu kolom penuh */
         .pf-count-1 .pf-photos {
             grid-template-columns: 1fr;
             grid-template-rows: 380px;
@@ -1256,7 +980,6 @@
         }
 
         .lb-cap .cat {
-            /* label kecil: aksen */
             color: var(--accent);
             letter-spacing: .2em;
             text-transform: uppercase;
@@ -1339,8 +1062,6 @@
             color: var(--accent);
         }
 
-        /* hover: aksen */
-
         .footer-links {
             display: flex;
             align-items: center;
@@ -1348,15 +1069,11 @@
             flex-wrap: wrap;
         }
 
-        /* ruang kosong di paling bawah biar konten section terakhir nggak
-           ketutupan footer yang sekarang fixed */
         body {
             padding-bottom: 76px;
         }
 
         @media (max-width: 640px) {
-
-            /* di layar sempit footer gampang wrap jadi 2 baris -> ruangnya ditambah */
             body {
                 padding-bottom: 116px;
             }
@@ -1373,17 +1090,8 @@
                 transform: none;
             }
 
-            /* matikan total seluruh layer reaktif-musik: partikel, cursor glow,
-               dan semua glow yang dipompa lewat --pulse */
-            #bgParticles,
-            .cursor-glow {
-                display: none !important;
-            }
-
             .hero h1 em,
-            .nav a.active::after,
-            .music-player.playing,
-            figure.card.in-view {
+            .nav a.active::after {
                 box-shadow: none !important;
                 text-shadow: none !important;
             }
@@ -1407,7 +1115,6 @@
         <span class="pl-count" id="plCount">0 / 0</span>
     </div>
 
-    <canvas id="bgParticles" aria-hidden="true"></canvas>
     <div class="wrap">
 
         <!-- ================= HEADER ================= -->
@@ -1451,44 +1158,6 @@
                 BUDALNO!!!..</p>
         </section>
 
-        <!-- ================= MUSIC PLAYER (center, lebar penuh halaman) ================= -->
-        <div class="music-player" id="musicPlayer">
-            <span id="musicLabel" class="mp-label">MAINKAN MUSIKNYA!!! BIAR ENAK KITA</span>
-            <div class="mp-controls">
-                <button class="mp-skip" id="mpPrev" aria-label="Mundur 10 detik">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M11 18V6l-8.5 6zM20 18V6l-8.5 6z" />
-                    </svg>
-                </button>
-                <button class="mp-btn" id="musicBtn" aria-pressed="false" aria-label="Putar musik latar">
-                    <svg class="mp-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <svg class="mp-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
-                    </svg>
-                </button>
-                <button class="mp-skip" id="mpNext" aria-label="Maju 10 detik">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M13 6v12l8.5-6zM4 6v12l8.5-6z" />
-                    </svg>
-                </button>
-            </div>
-            <div class="mp-seek-row">
-                <input type="range" class="mp-seek" id="mpSeek" min="0" max="100" value="0" step="0.1"
-                    aria-label="Posisi lagu" />
-                <button class="mp-vol" id="mpVol" aria-label="Bisukan atau nyalakan suara">
-                    <svg class="mp-vol-on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M4 9v6h4l5 5V4L8 9H4zm11.5 3a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 15.5 12z" />
-                    </svg>
-                    <svg class="mp-vol-off" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path
-                            d="M4 9v6h4l5 5V4L8 9H4zm14.7-1.7-1.4 1.4L19 10.4l-1.7 1.7 1.4 1.4L20.4 12l1.7 1.7 1.4-1.4L21.8 10.6l1.7-1.7-1.4-1.4-1.7 1.7z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
         <!-- ================= NAV ================= -->
         <nav class="nav" id="nav" aria-label="Navigasi bagian"></nav>
 
@@ -1519,14 +1188,6 @@
         <div class="lb-cap" id="lbCap"></div>
     </div>
 
-    <!-- Cursor glow reaktif musik. Otomatis disembunyikan di device touch/no-hover. -->
-    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
-
-    <!-- Musik latar. Ganti src ke file lagumu (mis. music/music.mp3).
-         preload="metadata" biar durasi lagu kebaca lebih awal (buat seek bar),
-         TANPA nge-download seluruh file & TANPA autoplay. -->
-    <audio id="audio" loop preload="metadata" src="music/music.mp3"></audio>
-
     <script>
         /* =====================================================================
            ================  DATA — EDIT DI SINI SEMUA  =======================
@@ -1536,9 +1197,7 @@
         const WA_NUMBER = "6285647234364";
         const WA_MESSAGE = "Halo Uhygrapy! Aku mau tanya soal jasa foto";
 
-        /* --- 1b) PROFIL / TENTANG SAYA ---
-           photos : 1–3 foto diri (taruh di folder images/). Foto pertama = besar (tall).
-           heading, bio, meta : tinggal edit teksnya. ig : username Instagram. */
+        /* --- 1b) PROFIL / TENTANG SAYA --- */
         const PROFILE = {
             eyebrow: "Profil",
             heading: "Di balik lensa Uhygrapy.",
@@ -1552,10 +1211,7 @@
             ],
         };
 
-        /* --- 2) FOTO ---
-           cat: "cosplay" | "lamaran" | "wisuda" | "casual" | "lainnya" | "dokumentasi"
-           Dirender per-section sesuai cat (bukan digabung + filter).
-           Section kosong -> otomatis tampil empty-state. */
+        /* --- 2) FOTO --- */
         const PHOTOS = [
             // ---- Cosplay ----
             { src: "images/foto_cosplayer2.jpg", cat: "cosplay", title: "Sesi cosplay" },
@@ -1577,7 +1233,6 @@
             { src: "images/foto_cosplayer18.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer19.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer20.jpg", cat: "cosplay", title: "Sesi cosplay" },
-
 
             // ---- Lamaran (engagement) ----
             { src: "images/engangment1.jpg", cat: "lamaran", title: "Momen lamaran" },
@@ -1622,10 +1277,6 @@
             { src: "images/casual8.jpg", cat: "casual", title: "Sesi casual" },
             { src: "images/casual9.jpg", cat: "casual", title: "Sesi casual" },
 
-            // ---- Lain-lain ----
-            // { src: "images/lainnya1.jpg", cat: "lainnya", title: "Frame pilihan" },
-
-
             // ---- Dokumentasi Kegiatan ----
             { src: "images/dokumentasi1.jpg", cat: "dokumentasi", title: "Acara komunitas" },
             { src: "images/dokumentasi2.jpg", cat: "dokumentasi", title: "Acara komunitas" },
@@ -1647,30 +1298,16 @@
             { src: "images/dokumentasi18.jpg", cat: "dokumentasi", title: "Acara komunitas" },
         ];
 
-        /* --- 3) URUTAN & TEKS SECTION FOTO ---
-           Dokumentasi sekarang jadi salah satu kategori foto di sini.
-           Urutan section ngikut urutan array ini. Field `nav` opsional =
-           label pendek buat menu atas (kalau kosong, pakai `label`). */
+        /* --- 3) URUTAN & TEKS SECTION FOTO --- */
         const PHOTO_SECTIONS = [
             { key: "cosplay", label: "Cosplay", intro: "Karakter, ekspresi, dan detail kostum — dibangun frame demi frame." },
             { key: "lamaran", label: "Lamaran", intro: "Momen intim dan emosional dari sebuah janji." },
             { key: "wisuda", label: "Wisuda", intro: "Pencapaian dan kebanggaan di penghujung perjalanan." },
             { key: "casual", label: "Casual", intro: "Natural, santai, buat personal branding tanpa dibuat-buat." },
-            // { key: "lainnya", label: "Lain-lain", intro: "Frame pilihan di luar kategori utama." },
             { key: "dokumentasi", label: "Dokumentasi Kegiatan", nav: "Dokumentasi", intro: "Liputan acara & kegiatan — menangkap suasana secara menyeluruh." },
         ];
 
-        /* --- 4) VIDEO ---
-           group   : "sinematografi" | "profil"
-           type    : "native" (file mp4) | "youtube" | "vimeo"
-           embedUrl:
-             - native   -> "vidio/namafile.mp4"
-             - YouTube  -> "https://www.youtube.com/embed/VIDEO_ID"
-             - Vimeo    -> "https://player.vimeo.com/video/VIDEO_ID"
-             - kosong "" -> placeholder "Video segera hadir"
-           thumbnail: OPSIONAL. Kalau diisi (path gambar) dipakai jadi cover.
-                      Kalau kosong: native -> frame pertama video jadi preview;
-                      youtube -> ambil thumbnail YouTube otomatis. */
+        /* --- 4) VIDEO --- */
         const VIDEOS = [
             // (a) Sinematografi — short film / cinematic reels
             { group: "sinematografi", type: "native", embedUrl: "vidio/cine1.mp4", thumbnail: "", title: "Cinematic Indoor", desc: "Deskripsi singkat cinematic reel." },
@@ -1681,27 +1318,14 @@
             { group: "profil", type: "native", embedUrl: "vidio/profile2.mp4", thumbnail: "", title: "Video Profil — Balai Pengembangan Kompetensi PU Wilayah VI Surabaya", desc: "Company/institution profile video." },
         ];
 
-        /* --- 5) SERTIFIKAT & PENGHARGAAN (PLACEHOLDER) ---
-           image  : path gambar sertifikat (kosong "" -> kotak dashed + ikon piala)
-           title  : nama sertifikat/karya
-           event  : nama lomba/acara
-           year   : tahun
-           achievement : capaian (mis. "Juara 1") */
+        /* --- 5) SERTIFIKAT & PENGHARGAAN --- */
         const CERTS = [
             { image: "sertifikat/sertifikat1.jpg", title: "Juara 1 Creative Competition", event: "CIVIL DAYS 2026", year: "2026", achievement: "Juara 1" },
             { image: "sertifikat/sertifikat2.jpg", title: "Juara 1 Lomba Fotografi Nasional", event: "RAKERNAS INDOCEISS 2026", year: "2026", achievement: "Juara 1" },
             { image: "sertifikat/sertifikat3.jpg", title: "Juara 2 Lomba Short Movie Nasional", event: "RAKERNAS INDOCEISS 2026", year: "2026", achievement: "Juara 2" },
-
         ];
 
-        /* --- 6) KERJA SAMA / CLIENT LIST ---
-           logo : path file logo (kosong "" -> kotak abu berisi nama instansi)
-           name : nama brand/instansi
-           bg   : OPSIONAL. Warna background chip khusus logo ini.
-                  Default chip putih. Isi ini kalau logo punya background nempel
-                  (mis. PU navy) -> set ke warna navy-nya biar nyatu, TANPA kotak.
-                  Cara pas: buka file logonya, ambil (eyedropper) warna background-
-                  nya, taruh hex-nya di sini. Paling ideal: pakai PNG transparan. */
+        /* --- 6) KERJA SAMA / CLIENT LIST --- */
         const PARTNERS = [
             { logo: "partner/ITATS.jpg", name: "Institut Teknologi Adhi Tama" },
             { logo: "partner/BAPEKOM6SBY.png", name: "Balai Pengembangan Kompetensi PU Wilayah VI Surabaya" },
@@ -1710,20 +1334,7 @@
             { logo: "partner/indoCEISS.png", name: "Indonesia Center for Environmental Sustainability Studies" },
         ];
 
-        /* --- 7) PRELOADER ---
-           Preload SEMUA GAMBAR (foto profil, seluruh galeri foto, sertifikat,
-           logo partner) sebelum halaman utama ditampilkan ke pengunjung.
-
-           CATATAN JUJUR: video (vidio/cine1.mp4 dkk) & musik latar (music/music.mp3)
-           SENGAJA TIDAK ikut didownload penuh di sini. File video/audio biasanya
-           berukuran puluhan-ratusan kali lebih besar dari foto — kalau ikut
-           ditunggu sebelum halaman dibuka, loading awal bisa jadi sangat lama,
-           terutama di koneksi seluler, dan itu pengalaman yang buruk buat
-           pengunjung. Video tetap pakai preview ringan (metadata/frame pertama,
-           seperti sebelumnya) dan musik baru diunduh saat tombol play ditekan.
-           Kalau kamu memang mau video & musik ikut didownload penuh sebelum
-           halaman kebuka, itu bisa ditambahkan, tapi kasih tahu dulu — sengaja
-           saya pisahkan supaya kamu bisa putuskan sendiri trade-off-nya. */
+        /* --- 7) PRELOADER --- */
         (function preloadAssets() {
             const rootEl = document.documentElement;
             const preloaderEl = document.getElementById("preloader");
@@ -1762,9 +1373,6 @@
 
             if (total === 0) { finish(); return; }
 
-            // Skala timeout ke jumlah aset: makin banyak gambar, makin lama toleransinya.
-            // Ini cuma jaga-jaga kalau ADA file yang benar-benar gagal/hilang (404, dsb),
-            // bukan buat "buru-buru" nutup preloader saat koneksi cuma lambat.
             const MAX_WAIT_MS = Math.max(20000, total * 450);
             let settled = false;
 
@@ -1772,8 +1380,6 @@
                 if (!settled) { settled = true; finish(); }
             }, MAX_WAIT_MS);
 
-            // Tombol "Lewati" muncul setelah 6 detik — biar user yang koneksinya
-            // memang lambat tetap punya kontrol, tanpa preloader nutup sendiri diam-diam.
             let skipBtn;
             const skipTimer = setTimeout(() => {
                 if (settled || !preloaderEl) return;
@@ -1808,8 +1414,6 @@
            ================  LOGIKA RENDER (jarang perlu disentuh)  ============
            ===================================================================== */
 
-        /* semua tombol WhatsApp (header + footer) pakai class "wa-cta" biar
-           link-nya di-set bareng di sini — satu sumber, gampang nambah lagi. */
         document.querySelectorAll(".wa-cta").forEach(a => {
             a.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`;
         });
@@ -1819,12 +1423,11 @@
         const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
         const pad2 = n => String(n).padStart(2, "0");
 
-        /* nomor section non-foto dihitung otomatis dari jumlah kategori foto */
         const N_VIDEO = PHOTO_SECTIONS.length + 1;
         const N_CERT = PHOTO_SECTIONS.length + 2;
         const N_PARTNER = PHOTO_SECTIONS.length + 3;
 
-        /* ---------- NAV (urutan = urutan section) ---------- */
+        /* ---------- NAV ---------- */
         const NAV = [
             { id: "profil", label: "Profil" },
             ...PHOTO_SECTIONS.map(s => ({ id: s.key, label: s.nav || s.label })),
@@ -1926,7 +1529,6 @@
         function videoPoster(v) {
             if (v.thumbnail) return `<img src="${esc(v.thumbnail)}" alt="${esc(v.title)}" loading="lazy" />`;
             if (v.type === "native" && v.embedUrl)
-                // frame pertama sebagai preview: muted, TIDAK autoplay, cuma load metadata (ringan)
                 return `<video src="${esc(v.embedUrl)}#t=0.1" muted playsinline preload="metadata"></video>`;
             if (v.type === "youtube" && v.embedUrl) {
                 const id = ytId(v.embedUrl);
@@ -2064,8 +1666,6 @@
                 const hasLogo = !!p.logo;
                 const card = document.createElement("div");
                 card.className = "pcard";
-                // bg opsional per-logo: kalau logo punya background nempel (mis. PU navy),
-                // set p.bg ke warna itu biar chip nyatu tanpa "kotak" di dalam putih.
                 const bgStyle = p.bg ? ` style="background:${esc(p.bg)}"` : "";
                 card.innerHTML = hasLogo
                     ? `<div class="plogo"${bgStyle}><img src="${esc(p.logo)}" alt="${esc(p.name)}" loading="lazy" /></div>`
@@ -2156,8 +1756,6 @@
 
         /* =====================================================================
            ================  FOTO: fade in/out saat masuk-keluar viewport  ====
-           Ringan (cuma toggle class + transisi opacity), gantiin animasi
-           melayang-layang yang lebih berat sebelumnya.
            ===================================================================== */
         (function fadeCardsOnScroll() {
             const io = new IntersectionObserver((entries) => {
@@ -2168,246 +1766,7 @@
             document.querySelectorAll("figure.card").forEach(c => io.observe(c));
         })();
 
-        /* =====================================================================
-           ================  MUSIK + LAYER ANIMASI REAKTIF  ===================
-           ===================================================================== */
-        const audio = document.getElementById("audio");
-        const musicPlayerEl = document.getElementById("musicPlayer");
-        const musicBtn = document.getElementById("musicBtn");
-        const musicLabel = document.getElementById("musicLabel");
-        const mpPrev = document.getElementById("mpPrev");
-        const mpNext = document.getElementById("mpNext");
-        const mpSeek = document.getElementById("mpSeek");
-        const mpVol = document.getElementById("mpVol");
-
-        const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const IS_SMALL = window.innerWidth < 600;
-
-        musicBtn.addEventListener("click", () => {
-            if (audio.paused) {
-                audio.play().then(() => {
-                    musicPlayerEl.classList.add("playing");
-                    musicBtn.setAttribute("aria-pressed", "true");
-                    musicLabel.textContent = "Sedang diputar";
-                    // AudioContext HARUS dibuat/di-resume dari dalam user gesture
-                    // (kebijakan browser) — makanya dipanggil di sini, bukan di awal load.
-                    if (!REDUCE_MOTION) initMusicReactive();
-                }).catch(() => {
-                    musicLabel.textContent = "File musik belum ada";
-                    setTimeout(() => musicLabel.textContent = "Mainkan musiknya", 1800);
-                });
-            } else {
-                audio.pause();
-                musicPlayerEl.classList.remove("playing");
-                musicBtn.setAttribute("aria-pressed", "false");
-                musicLabel.textContent = "Mainkan musiknya";
-            }
-        });
-
-        /* ---- mundur / maju 10 detik ---- */
-        mpPrev.addEventListener("click", () => {
-            audio.currentTime = Math.max(0, audio.currentTime - 10);
-        });
-        mpNext.addEventListener("click", () => {
-            if (audio.duration) audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-        });
-
-        /* ---- seek bar: geser buat lompat posisi, otomatis update saat lagu jalan ---- */
-        let userSeeking = false;
-        mpSeek.addEventListener("input", () => {
-            userSeeking = true;
-            if (audio.duration) audio.currentTime = (mpSeek.value / 100) * audio.duration;
-            mpSeek.style.setProperty("--fill", mpSeek.value + "%");
-        });
-        mpSeek.addEventListener("change", () => { userSeeking = false; });
-        audio.addEventListener("timeupdate", () => {
-            if (userSeeking || !audio.duration) return;
-            const pct = (audio.currentTime / audio.duration) * 100;
-            mpSeek.value = pct;
-            mpSeek.style.setProperty("--fill", pct + "%");
-        });
-
-        /* ---- tombol volume: toggle bisu ---- */
-        mpVol.addEventListener("click", () => {
-            audio.muted = !audio.muted;
-            mpVol.classList.toggle("muted", audio.muted);
-        });
-
         document.getElementById("yr").textContent = new Date().getFullYear();
-
-        /* ---------------------------------------------------------------
-           initMusicReactive()
-           Nyalain sekali (guard di bawah) saat user pertama kali klik play.
-           Bikin AnalyserNode nempel ke <audio>, lalu jalanin satu render
-           loop yang dipakai bareng buat: eq bar, glow --pulse, partikel
-           hero, dan cursor glow. Semua elemen ini juga tetap "hidup" pelan
-           (idle) walau musik lagi pause, biar nggak kaku pas berhenti.
-           --------------------------------------------------------------- */
-        let reactiveInitialized = false;
-
-        function initMusicReactive() {
-            if (reactiveInitialized) return;
-            reactiveInitialized = true;
-
-            let analyser, freqData, bufferLength;
-            let audioReady = false;
-
-            try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                const ctx = new AudioCtx();
-                const source = ctx.createMediaElementSource(audio);
-                analyser = ctx.createAnalyser();
-                analyser.fftSize = IS_SMALL ? 64 : 128; // kecil = ringan, cukup buat 2-3 band
-                analyser.smoothingTimeConstant = 0.75;
-                bufferLength = analyser.frequencyBinCount;
-                freqData = new Uint8Array(bufferLength);
-
-                source.connect(analyser);
-                analyser.connect(ctx.destination); // penting: biar suara tetap kedengeran
-
-                // Beberapa browser mulai AudioContext dalam status "suspended"
-                if (ctx.state === "suspended") ctx.resume();
-
-                audioReady = true;
-                musicPlayerEl.classList.add("reactive"); // matikan CSS bounce statis, JS ambil alih
-            } catch (err) {
-                // Web Audio API tidak didukung / gagal — biarkan fallback CSS bounce
-                // yang sudah ada tetap jalan, animasi lain tetap di mode idle.
-                audioReady = false;
-            }
-
-            /* ---------- setup partikel full-page (canvas) ----------
-               Beda dari versi sebelumnya (yang cuma di area hero): kanvas ini
-               position:fixed nutupin seluruh viewport, jadi partikel kelihatan
-               melayang dari atas sampai bawah layar, di scroll posisi manapun. */
-            const canvas = document.getElementById("bgParticles");
-            const pctx = canvas ? canvas.getContext("2d") : null;
-            let particles = [];
-            const PARTICLE_COUNT = IS_SMALL ? 22 : 46;
-
-            function sizeCanvas() {
-                if (!canvas) return;
-                canvas.width = window.innerWidth * devicePixelRatio;
-                canvas.height = window.innerHeight * devicePixelRatio;
-                canvas.style.width = window.innerWidth + "px";
-                canvas.style.height = window.innerHeight + "px";
-            }
-            function makeParticles() {
-                if (!canvas) return;
-                const w = canvas.width, h = canvas.height;
-                particles = Array.from({ length: PARTICLE_COUNT }, () => ({
-                    x: Math.random() * w,
-                    // tersebar merata dari atas sampai bawah sejak awal
-                    // (bukan cuma nongol dari bawah), biar full-page langsung kerasa.
-                    y: Math.random() * h,
-                    r: (1 + Math.random() * 2) * devicePixelRatio,
-                    speed: (0.15 + Math.random() * 0.35) * devicePixelRatio,
-                    drift: (Math.random() - 0.5) * 0.3 * devicePixelRatio,
-                    baseAlpha: 0.22 + Math.random() * 0.32,
-                }));
-            }
-            if (pctx) {
-                sizeCanvas();
-                makeParticles();
-                window.addEventListener("resize", () => { sizeCanvas(); makeParticles(); }, { passive: true });
-            }
-
-            /* ---------- setup IntersectionObserver: tandai card yg lagi kelihatan ---------- */
-            const cardIO = new IntersectionObserver((entries) => {
-                entries.forEach(en => en.target.classList.toggle("in-view", en.isIntersecting));
-            }, { rootMargin: "0px 0px -10% 0px", threshold: 0.15 });
-            function observeCards() {
-                document.querySelectorAll("figure.card:not([data-io])").forEach(c => {
-                    c.dataset.io = "1";
-                    cardIO.observe(c);
-                });
-            }
-            observeCards();
-            // Konten kategori dirender lebih dulu di atas, jadi cukup observe sekali di sini;
-            // dipanggil ulang tiap frame pertama aman-aman saja karena guarded dengan data-io.
-
-            /* ---------- cursor glow (skip di device tanpa mouse asli) ---------- */
-            const cursorGlow = document.getElementById("cursorGlow");
-            const hasHover = window.matchMedia("(hover: hover)").matches;
-            let cursorX = 0, cursorY = 0, cursorSet = false;
-            if (cursorGlow && hasHover) {
-                window.addEventListener("mousemove", (e) => {
-                    cursorX = e.clientX; cursorY = e.clientY;
-                    if (!cursorSet) { cursorGlow.classList.add("visible"); cursorSet = true; }
-                }, { passive: true });
-            }
-
-            /* ---------- render loop ---------- */
-            let curBass = 0, curMid = 0, curTreble = 0;
-            const IDLE_LEVEL = 0.12; // gerakan minim tetap ada walau musik pause
-
-            function readBands() {
-                analyser.getByteFrequencyData(freqData);
-                const third = Math.max(1, Math.floor(bufferLength / 3));
-                let bassSum = 0, midSum = 0, trebleSum = 0;
-                for (let i = 0; i < third; i++) bassSum += freqData[i];
-                for (let i = third; i < third * 2; i++) midSum += freqData[i];
-                for (let i = third * 2; i < bufferLength; i++) trebleSum += freqData[i];
-                const bass = bassSum / third / 255;
-                const mid = midSum / third / 255;
-                const treble = trebleSum / (bufferLength - third * 2 || 1) / 255;
-                return { bass, mid, treble };
-            }
-
-            function tick() {
-                const playing = audioReady && !audio.paused;
-
-                if (playing) {
-                    const { bass, mid, treble } = readBands();
-                    // sedikit kurva biar lebih "nendang" secara visual, lalu smoothing
-                    curBass += ((Math.pow(bass, 0.85)) - curBass) * 0.35;
-                    curMid += ((Math.pow(mid, 0.85)) - curMid) * 0.35;
-                    curTreble += (treble - curTreble) * 0.35;
-                } else {
-                    // idle: pelan-pelan turun ke level ambient rendah, bukan langsung 0
-                    curBass += (IDLE_LEVEL - curBass) * 0.03;
-                    curMid += (IDLE_LEVEL * 0.7 - curMid) * 0.03;
-                    curTreble += (IDLE_LEVEL * 0.5 - curTreble) * 0.03;
-                }
-
-                document.documentElement.style.setProperty("--pulse", curBass.toFixed(3));
-                document.documentElement.style.setProperty("--pulse-mid", curMid.toFixed(3));
-
-                // partikel hero — selalu jalan (idle ambient + makin hidup saat playing)
-                if (pctx && canvas.width > 0) {
-                    pctx.clearRect(0, 0, canvas.width, canvas.height);
-                    particles.forEach(p => {
-                        p.y -= p.speed * (1 + curBass * 2.2);
-                        p.x += p.drift;
-                        if (p.y < -10) {
-                            p.y = canvas.height + 10;
-                            p.x = Math.random() * canvas.width;
-                        }
-                        const alpha = p.baseAlpha * (0.5 + curBass * 0.9);
-                        pctx.beginPath();
-                        pctx.fillStyle = `rgba(139,30,30,${Math.min(alpha, 0.9)})`;
-                        pctx.arc(p.x, p.y, p.r * (1 + curBass * 0.6), 0, Math.PI * 2);
-                        pctx.fill();
-                    });
-                }
-
-                // cursor glow — sedikit membesar mengikuti bass
-                if (cursorGlow && hasHover && cursorSet) {
-                    const scale = 1 + curBass * 0.9;
-                    cursorGlow.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(${scale})`;
-                }
-
-                // pastikan card baru yang muncul (mis. lazy render) ikut ke-observe
-                observeCards();
-
-                requestAnimationFrame(tick);
-            }
-            requestAnimationFrame(tick);
-        }
-
-        // Kalau device sangat kecil / reduce-motion, tetap sediakan idle partikel super ringan
-        // dengan langsung memicu setup begitu user pertama kali menekan tombol musik (di atas).
-        // Tidak dipanggil di awal load supaya AudioContext hanya dibuat via user gesture.
     </script>
 </body>
 
