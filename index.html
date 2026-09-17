@@ -439,6 +439,36 @@
             margin: 8px 0 20px;
         }
 
+        /* ============ FEATURED (foto besar paling atas per kategori) ============ */
+        .featured {
+            margin-bottom: 22px;
+        }
+
+        figure.card.featured-card {
+            margin: 0;
+        }
+
+        figure.card.featured-card img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+
+        figure.card.featured-card figcaption {
+            padding: 60px 22px 20px;
+            font-size: 14px;
+        }
+
+        figure.card.featured-card figcaption .cat {
+            font-size: 11px;
+        }
+
+        @media (max-width: 640px) {
+            figure.card.featured-card img {
+                height: clamp(220px, 62vw, 360px);
+            }
+        }
+
         /* ============ MASONRY (foto) ============ */
         .grid {
             column-count: 4;
@@ -1214,6 +1244,7 @@
         /* --- 2) FOTO --- */
         const PHOTOS = [
             // ---- Cosplay ----
+            { src: "images/foto_cosplayer1.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer2.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer3.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer4.jpg", cat: "cosplay", title: "Sesi cosplay" },
@@ -1232,7 +1263,6 @@
             { src: "images/foto_cosplayer17.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer18.jpg", cat: "cosplay", title: "Sesi cosplay" },
             { src: "images/foto_cosplayer19.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer20.jpg", cat: "cosplay", title: "Sesi cosplay" },
 
             // ---- Lamaran (engagement) ----
             { src: "images/engangment1.jpg", cat: "lamaran", title: "Momen lamaran" },
@@ -1241,7 +1271,7 @@
             { src: "images/engangment4.jpg", cat: "lamaran", title: "Momen lamaran" },
             { src: "images/engangment5.jpg", cat: "lamaran", title: "Momen lamaran" },
             { src: "images/engangment6.jpg", cat: "lamaran", title: "Momen lamaran" },
-            {src: "images/engangment7.jpg", cat: "lamaran", title: "Momen lamaran" },
+            { src: "images/engangment7.jpg", cat: "lamaran", title: "Momen lamaran" },
             { src: "images/engangment8.jpg", cat: "lamaran", title: "Momen lamaran" },
             { src: "images/engangment9.jpg", cat: "lamaran", title: "Momen lamaran" },
 
@@ -1452,9 +1482,19 @@
             navEl.appendChild(a);
         });
 
-        /* ---------- helper: bikin grid foto + list lightbox ---------- */
-        function buildPhotoGrid(gridEl, items, label) {
-            const lbItems = items.map(p => ({ _type: "image", src: p.src, eyebrow: label, title: p.title }));
+        /* ---------- helper: kartu foto besar (featured), 1 per section ---------- */
+        function buildFeatured(container, item, lbItems, label) {
+            const fig = document.createElement("figure");
+            fig.className = "card featured-card";
+            fig.innerHTML = `
+                <img src="${esc(item.src)}" alt="${esc(item.title)} — ${esc(label)}" loading="lazy" />
+                <figcaption><span class="cat">${esc(label)}</span><br>${esc(item.title)}</figcaption>`;
+            fig.addEventListener("click", () => openLightbox(lbItems, 0, "image"));
+            container.appendChild(fig);
+        }
+
+        /* ---------- helper: bikin grid foto kecil (sisanya) + list lightbox ---------- */
+        function buildPhotoGrid(gridEl, items, label, lbItems, offset) {
             items.forEach((p, idx) => {
                 const fig = document.createElement("figure");
                 fig.className = "card";
@@ -1462,12 +1502,12 @@
                 fig.innerHTML = `
                     <img src="${esc(p.src)}" alt="${esc(p.title)} — ${esc(label)}" loading="lazy" />
                     <figcaption><span class="cat">${esc(label)}</span><br>${esc(p.title)}</figcaption>`;
-                fig.addEventListener("click", () => openLightbox(lbItems, idx, "image"));
+                fig.addEventListener("click", () => openLightbox(lbItems, offset + idx, "image"));
                 gridEl.appendChild(fig);
             });
         }
 
-        /* ---------- render 1 section foto ---------- */
+        /* ---------- render 1 section foto: 1 foto besar di atas + grid kecil di bawah ---------- */
         function renderPhotoSection(sec, num) {
             const items = PHOTOS.filter(p => p.cat === sec.key);
             const el = document.createElement("section");
@@ -1481,12 +1521,17 @@
                     <p>${esc(sec.intro)}</p>
                 </div>`;
             inner += items.length
-                ? `<div class="grid"></div>`
+                ? `<div class="featured"></div><div class="grid"></div>`
                 : `<div class="empty-state"><span class="es-line"></span><p>Karya <b>${esc(sec.label)}</b> segera hadir.</p></div>`;
             el.innerHTML = inner;
             contentEl.appendChild(el);
 
-            if (items.length) buildPhotoGrid(el.querySelector(".grid"), items, sec.label);
+            if (items.length) {
+                const lbItems = items.map(p => ({ _type: "image", src: p.src, eyebrow: sec.label, title: p.title }));
+                const [first, ...rest] = items;
+                buildFeatured(el.querySelector(".featured"), first, lbItems, sec.label);
+                buildPhotoGrid(el.querySelector(".grid"), rest, sec.label, lbItems, 1);
+            }
         }
 
         /* ---------- SECTION PROFIL (paling atas) ---------- */
