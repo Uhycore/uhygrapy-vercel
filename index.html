@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Uhygrapy — Portofolio</title>
+    <title>Uhygrapy — Fotografer Wisuda</title>
     <meta name="description"
-        content="Portofolio foto & video Uhygrapy — cosplay, lamaran, wisuda, casual, sinematografi, dokumentasi kegiatan, dan penghargaan." />
+        content="Uhygrapy — fotografer wisuda di Sidoarjo & Surabaya. Foto keluarga, foto berdua, foto sendiri, detail wisuda, dan paket harga." />
 
     <!-- ====== FONTS ====== -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,33 +17,23 @@
 
     <style>
         /* =====================================================================
-           TEMA WARNA — OPSI B (Hitam–Merah maroon) AKTIF
+           TEMA WARNA — OPSI C (Biru–Vanila) AKTIF
            Semua warna lewat variabel di :root ini. Ganti tema cukup di sini,
            HTML & JS TIDAK perlu disentuh.
-           Komentar di samping = nilai "Opsi A — Amber" (kalau mau balik).
            ===================================================================== */
         :root {
             --bg: #0a0a0a;
-            /* Opsi A: #0d0d0d (pure black) */
             --bg-soft: #161616;
-            /* Opsi A: #151515 (kartu/permukaan) */
             --line: #262626;
-            /* Opsi A: #232320 (garis divider) */
-            --text: #e5e5e5;
-            /* Opsi A: #f2f2f2 (teks utama) */
+            --text: #ffffff;
             --muted: #8a8a8a;
-            /* Opsi A: #8b877e (teks sekunder) */
-            --accent: #8b1e1e;
-            /* Opsi A: #d9a441 (merah maroon gelap) */
-            --accent-dim: #6b1616;
-            /* Opsi A: #a87f30 (aksen hover/border) */
+            --accent: #c22c2c;
+            --accent-dim: #8f1f1f;
             --wa: #25d366;
-            /* identitas WhatsApp — biarkan hijau */
 
             --radius: 12px;
             --maxw: 1500px;
             --nav-h: 58px;
-            /* tinggi bar nav sticky (scroll offset) */
         }
 
         * {
@@ -63,15 +53,14 @@
             overflow-x: hidden;
         }
 
-        /* film grain sangat halus — cinematic tanpa ramai */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
             z-index: 0;
             pointer-events: none;
-            opacity: .022;
-            mix-blend-mode: overlay;
+            opacity: .018;
+            mix-blend-mode: multiply;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
@@ -83,7 +72,6 @@
             padding: 0 26px;
         }
 
-        /* teks disembunyikan visual tapi tetap kebaca screen reader */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -97,10 +85,6 @@
         }
 
         /* ============ PRELOADER ============ */
-        /* Mengunci scroll selama aset (foto profil, galeri, sertifikat, logo
-           partner) masih diunduh, supaya pengunjung tidak "kepotong" konten
-           yang belum siap. Dibuka lagi lewat JS (preloadAssets) setelah semua
-           gambar selesai/gagal dimuat, atau setelah batas waktu jaga-jaga. */
         html.is-loading,
         html.is-loading body {
             overflow: hidden;
@@ -193,7 +177,6 @@
             min-width: 0;
         }
 
-        /* aperture: netral (bukan aksen) — biar merah tetap super minim */
         .aperture {
             width: 32px;
             height: 32px;
@@ -223,7 +206,6 @@
             letter-spacing: -.01em;
         }
 
-        /* "grapy" -> netral (ikut warna teks), sesuai keputusan */
         .brand-name b {
             color: var(--text);
             font-weight: 700;
@@ -274,7 +256,6 @@
             height: 17px;
         }
 
-        /* WA: tetap hijau (identitas WhatsApp) */
         .btn-wa {
             border-color: color-mix(in srgb, var(--wa) 55%, transparent);
             color: var(--wa);
@@ -282,6 +263,17 @@
 
         .btn-wa:hover {
             border-color: var(--wa);
+        }
+
+        .btn-solid {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .btn-solid:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent-dim);
         }
 
         /* ============ HERO ============ */
@@ -311,6 +303,50 @@
             font-size: 15px;
             line-height: 1.7;
             max-width: 520px;
+        }
+
+        /* ============ ADS BANNER (promo) ============ */
+        .ads-banner {
+            margin: 0 0 18px;
+            padding: 18px 22px;
+            border: 1px solid var(--accent-dim);
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--bg-soft)), var(--bg-soft));
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .ads-txt {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .ads-label {
+            font-size: 10px;
+            letter-spacing: .24em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .ads-banner h3 {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(16px, 2.6vw, 19px);
+            font-weight: 600;
+            letter-spacing: -.01em;
+        }
+
+        .ads-banner p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            max-width: 480px;
         }
 
         /* ============ NAV (sticky anchor) ============ */
@@ -348,7 +384,6 @@
         }
 
         .nav a::after {
-            /* underline aktif/hover: aksen */
             content: "";
             position: absolute;
             left: 14px;
@@ -382,7 +417,6 @@
         section.block {
             padding: 66px 0;
             border-top: 1px solid var(--line);
-            /* divider netral */
             scroll-margin-top: calc(var(--nav-h) + 18px);
         }
 
@@ -396,7 +430,6 @@
         }
 
         .eyebrow {
-            /* eyebrow: aksen (teks + garis) */
             display: inline-flex;
             align-items: center;
             gap: 12px;
@@ -475,8 +508,6 @@
             transition: opacity .6s ease;
         }
 
-        /* fade in saat masuk viewport pas discroll, fade out lagi pas keluar
-           viewport (class ditoggle JS via IntersectionObserver). */
         figure.card.card-visible {
             opacity: 1;
         }
@@ -511,7 +542,6 @@
         }
 
         figcaption .cat {
-            /* label kecil: aksen */
             display: inline-block;
             font-size: 10px;
             letter-spacing: .2em;
@@ -520,7 +550,7 @@
             margin-bottom: 5px;
         }
 
-        /* ============ EMPTY STATE (section kosong) ============ */
+        /* ============ EMPTY STATE ============ */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -550,119 +580,111 @@
             font-weight: 600;
         }
 
-        /* ============ VIDEO CARDS ============ */
-        .vgrid {
+        /* ============ PAKET HARGA (pricing) ============ */
+        .pkgrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 22px;
-            margin-bottom: 46px;
         }
 
-        .vgrid:last-child {
-            margin-bottom: 0;
-        }
-
-        .vcard {
-            width: 100%;
-            text-align: left;
-            color: var(--text);
-            font-family: inherit;
-            appearance: none;
-            -webkit-appearance: none;
+        .pkcard {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 28px 24px;
             border: 1px solid var(--line);
             border-radius: var(--radius);
-            overflow: hidden;
             background: var(--bg-soft);
-            cursor: pointer;
-            transition: border-color .25s ease, transform .25s ease;
+            transition: border-color .2s ease, transform .2s ease;
         }
 
-        .vcard:hover {
+        .pkcard:hover {
+            transform: translateY(-4px);
             border-color: var(--accent-dim);
-            transform: translateY(-3px);
         }
 
-        .vcard:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
+        .pkcard.featured {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
         }
 
-        .vcard.is-placeholder {
-            cursor: default;
-        }
-
-        .vcard.is-placeholder:hover {
-            transform: none;
-            border-color: var(--line);
-        }
-
-        .vthumb {
-            position: relative;
-            aspect-ratio: 16 / 9;
-            background: #1c1c1c;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-        }
-
-        .vthumb img,
-        .vthumb video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .vthumb .ph-text {
-            font-size: 12.5px;
-            letter-spacing: .04em;
-            color: var(--muted);
-        }
-
-        .play {
+        .pk-badge {
             position: absolute;
-            inset: 0;
-            margin: auto;
-            width: 54px;
-            height: 54px;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 10px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            padding: 5px 12px;
             border-radius: 999px;
-            display: grid;
-            place-items: center;
-            background: rgba(0, 0, 0, .45);
-            border: 1px solid rgba(255, 255, 255, .25);
-            transition: background .2s ease;
-            pointer-events: none;
-        }
-
-        .vcard:hover .play {
-            background: color-mix(in srgb, var(--accent) 85%, black);
-        }
-
-        .play svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
-            margin-left: 2px;
-        }
-
-        .vmeta {
-            padding: 15px 16px 17px;
-        }
-
-        .vmeta h4 {
-            margin: 0;
-            color: var(--text);
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 15px;
             font-weight: 600;
-            letter-spacing: -.01em;
         }
 
-        .vmeta p {
-            margin: 7px 0 0;
+        .pk-name {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .pk-price {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .pk-price span {
+            font-size: 12px;
             color: var(--muted);
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        .pk-dur {
             font-size: 12.5px;
-            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        .pk-list {
+            list-style: none;
+            margin: 6px 0 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            flex: 1;
+        }
+
+        .pk-list li {
+            font-size: 13px;
+            color: var(--text);
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            line-height: 1.5;
+        }
+
+        .pk-list li::before {
+            content: "✓";
+            color: var(--accent);
+            font-weight: 700;
+            flex: none;
+        }
+
+        .pk-cta {
+            margin-top: 8px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .pk-note {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--muted);
         }
 
         /* ============ SERTIFIKAT ============ */
@@ -763,57 +785,6 @@
             font-size: 12.5px;
         }
 
-        /* ============ KERJA SAMA (partners) ============ */
-        .pgrid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 20px;
-        }
-
-        .pcard {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .plogo {
-            aspect-ratio: 1 / 1;
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            background: #fff;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-            padding: 20px;
-            transition: border-color .25s ease;
-        }
-
-        .plogo.placeholder {
-            background: var(--bg-soft);
-            padding: 18px;
-        }
-
-        .plogo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .plogo.placeholder span {
-            color: var(--muted);
-            font-size: 12.5px;
-            text-align: center;
-            letter-spacing: .02em;
-            line-height: 1.4;
-        }
-
-        .pname {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 12.5px;
-            color: var(--muted);
-        }
-
         /* ============ PROFIL ============ */
         .pf {
             display: grid;
@@ -909,6 +880,276 @@
             gap: 10px;
             margin-top: 24px;
             flex-wrap: wrap;
+        }
+
+        /* ============ KALENDER KETERSEDIAAN ============ */
+        .cal-wrap {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 720px) {
+            .cal-wrap {
+                max-width: 560px;
+            }
+
+            .cal-grid {
+                gap: 10px;
+            }
+
+            .cal-cell {
+                font-size: 16px;
+                border-radius: 10px;
+            }
+
+            .cal-dow {
+                font-size: 12px;
+            }
+
+            .cal-head h3 {
+                font-size: 19px;
+            }
+
+            .cal-nav button {
+                width: 38px;
+                height: 38px;
+                font-size: 19px;
+            }
+
+            .cal-dot {
+                width: 5px;
+                height: 5px;
+                margin-top: 4px;
+            }
+        }
+
+        .cal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px
+        }
+
+        .cal-head h3 {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 16px;
+            font-weight: 600
+        }
+
+        .cal-nav {
+            display: flex;
+            gap: 6px
+        }
+
+        .cal-nav button {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+            display: grid;
+            place-items: center
+        }
+
+        .cal-nav button:hover {
+            border-color: var(--accent-dim)
+        }
+
+        .cal-nav button:disabled {
+            opacity: .3;
+            cursor: not-allowed
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px
+        }
+
+        .cal-dow {
+            text-align: center;
+            font-size: 10.5px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding-bottom: 4px
+        }
+
+        .cal-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            position: relative
+        }
+
+        .cal-cell.empty {
+            visibility: hidden
+        }
+
+        .cal-cell.past {
+            color: var(--muted);
+            opacity: .35
+        }
+
+        .cal-cell.free {
+            background: var(--bg-soft);
+            border: 1px solid var(--line)
+        }
+
+        .cal-cell.booked {
+            background: color-mix(in srgb, var(--accent) 24%, var(--bg-soft));
+            border: 1px solid var(--accent-dim);
+            color: var(--text)
+        }
+
+        .cal-cell.today {
+            box-shadow: 0 0 0 1.5px var(--accent) inset
+        }
+
+        .cal-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--accent);
+            margin-top: 3px
+        }
+
+        .cal-legend {
+            display: flex;
+            gap: 18px;
+            margin-top: 16px;
+            font-size: 12.5px;
+            color: var(--muted)
+        }
+
+        .cal-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px
+        }
+
+        .cal-swatch {
+            width: 11px;
+            height: 11px;
+            border-radius: 3px;
+            display: inline-block
+        }
+
+        .cal-swatch.free {
+            background: var(--bg-soft);
+            border: 1px solid var(--line)
+        }
+
+        .cal-swatch.booked {
+            background: color-mix(in srgb, var(--accent) 24%, var(--bg-soft));
+            border: 1px solid var(--accent-dim)
+        }
+
+        .cal-loading,
+        .cal-error {
+            padding: 30px 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .cal-cell.booked {
+            cursor: pointer
+        }
+
+        .cal-cell.booked:hover {
+            filter: brightness(1.18)
+        }
+
+        .cal-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 70;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 6, 6, .78);
+            backdrop-filter: blur(4px);
+            padding: 20px
+        }
+
+        .cal-modal.open {
+            display: flex;
+            animation: fade .2s ease
+        }
+
+        .cal-modal-card {
+            position: relative;
+            width: min(360px, 92vw);
+            max-height: 80vh;
+            overflow-y: auto;
+            background: var(--bg-soft);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 26px 22px
+        }
+
+        .cal-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            display: grid;
+            place-items: center
+        }
+
+        .cal-modal-close:hover {
+            border-color: var(--accent-dim)
+        }
+
+        .cal-modal-date {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 0 0 14px;
+            padding-right: 20px
+        }
+
+        .cal-entry {
+            padding: 13px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        .cal-entry:first-of-type {
+            border-top: none;
+            padding-top: 0
+        }
+
+        .cal-entry-row {
+            display: flex;
+            gap: 10px;
+            font-size: 13px;
+            margin-top: 5px
+        }
+
+        .cal-entry-row:first-child {
+            margin-top: 0
+        }
+
+        .cal-entry-row .lbl {
+            color: var(--muted);
+            min-width: 64px;
+            flex: none
         }
 
         /* ============ LIGHTBOX ============ */
@@ -1031,7 +1272,7 @@
             display: none;
         }
 
-        /* ============ FOOTER (fixed bar, nempel di bawah layar) ============ */
+        /* ============ FOOTER (fixed bar) ============ */
         footer {
             position: fixed;
             bottom: 0;
@@ -1076,6 +1317,11 @@
         @media (max-width: 640px) {
             body {
                 padding-bottom: 116px;
+            }
+
+            .ads-banner {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
 
@@ -1126,7 +1372,7 @@
                 </svg>
                 <div class="brand-txt">
                     <div class="brand-name">Uhy<b>grapy</b></div>
-                    <div class="brand-tag">Foto · Video · Sinematografi</div>
+                    <div class="brand-tag">Fotografer Wisuda</div>
                 </div>
             </div>
 
@@ -1153,10 +1399,13 @@
 
         <!-- ================= HERO ================= -->
         <section class="hero">
-            <h1>Bisa booking sekarang <em>buktikan sendiri</em> hasilnya.</h1>
-            <p>Sidoarjo Barat - cosplayer, casual, engagement, prewedding, yudisium, wisuda dan lain-lain. TAK
-                BUDALNO!!!..</p>
+            <h1>Momen wisudamu, <em>diabadikan selamanya</em>.</h1>
+            <p>Sidoarjo & Surabaya — fotografer khusus wisuda: foto keluarga, foto berdua, foto sendiri,
+                sampai detail toga. Booking sekarang, slot terbatas!</p>
         </section>
+
+        <!-- ================= ADS / PROMO BANNER ================= -->
+        <div id="adsSlot"></div>
 
         <!-- ================= NAV ================= -->
         <nav class="nav" id="nav" aria-label="Navigasi bagian"></nav>
@@ -1195,13 +1444,13 @@
 
         /* --- 1) NOMOR WHATSAPP (format 62, tanpa + dan tanpa 0) --- */
         const WA_NUMBER = "6285647234364";
-        const WA_MESSAGE = "Halo Uhygrapy! Aku mau tanya soal jasa foto";
+        const WA_MESSAGE = "Halo Uhygrapy! Aku mau booking foto wisuda";
 
         /* --- 1b) PROFIL / TENTANG SAYA --- */
         const PROFILE = {
-            eyebrow: "Profil",
+            eyebrow: "Fotografer Wisuda",
             heading: "Di balik lensa Uhygrapy.",
-            bio: "Halo! Aku fotografer wes mek ngunu tok",
+            bio: "Halo! Aku fotografer khusus momen wisuda — dari foto bareng keluarga sampai detail toga, semua ditangkap dengan rapi dan natural.",
             meta: "Berbasis di Sidoarjo · Melayani Sidoarjo, Surabaya, dan sekitarnya",
             ig: "uhycore",
             photos: [
@@ -1211,136 +1460,105 @@
             ],
         };
 
-        /* --- 2) FOTO --- */
+        /* --- 1c) KALENDER KETERSEDIAAN ---
+           Isi dengan URL Web App dari Apps Script (doGet), setelah di-deploy.
+           Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone
+        */
+        const CALENDAR_API_URL = "https://script.google.com/macros/s/AKfycbwr47ufl_z-348syn0x6YZxbK7v24tej-6BLjYg0mRzQagrguF8STGHwP_lx4hoY0ApWA/exec";
+
+        /* --- 2) ADS / PROMO BANNER — set enabled:false untuk mematikan --- */
+        const ADS = {
+            enabled: true,
+            label: "Promo Wisuda",
+            heading: "Open Booking Wisuda 2026 — Slot Terbatas!",
+            text: "Booking sekarang sebelum musim wisuda ramai dan dapatkan harga spesial.",
+            ctaText: "Chat & Booking",
+        };
+
+        /* --- 3) FOTO (5 kategori wisuda) --- */
         const PHOTOS = [
-            // ---- Cosplay ----
-            { src: "images/foto_cosplayer1.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer2.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer3.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer4.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer5.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer6.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer7.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer8.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer9.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer10.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer11.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer12.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer13.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer14.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer15.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer16.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer17.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer18.jpg", cat: "cosplay", title: "Sesi cosplay" },
-            { src: "images/foto_cosplayer19.jpg", cat: "cosplay", title: "Sesi cosplay" },
+            // ---- Foto Keluarga ----
+            { src: "image/keluarga1.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga2.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga3.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga4.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga5.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga6.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga7.jpg", cat: "keluarga", title: "Bersama keluarga" },
+            { src: "image/keluarga8.jpg", cat: "keluarga", title: "Bersama keluarga" },
 
-            // ---- Lamaran (engagement) ----
-            { src: "images/engangment1.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment2.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment3.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment4.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment5.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment6.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment7.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment8.jpg", cat: "lamaran", title: "Momen lamaran" },
-            { src: "images/engangment9.jpg", cat: "lamaran", title: "Momen lamaran" },
+            // ---- Foto Berdua ----
+            { src: "image/ber21.jpg", cat: "berdua", title: "Foto berdua" },
+            { src: "image/ber22.jpg", cat: "berdua", title: "Foto berdua" },
+            { src: "image/ber23.jpg", cat: "berdua", title: "Foto berdua" },
+            { src: "image/ber24.jpg", cat: "berdua", title: "Foto berdua" },
+            { src: "image/ber25.jpg", cat: "berdua", title: "Foto berdua" },
+            { src: "image/ber26.jpg", cat: "berdua", title: "Foto berdua" },
 
-            // ---- Wisuda ----
-            { src: "images/foto_wisudah1.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah2.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah3.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah4.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah5.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah6.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah7.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah8.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah9.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah10.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah11.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah12.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah13.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah14.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah15.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah16.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah17.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah18.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah19.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah20.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah21.jpg", cat: "wisuda", title: "Hari kelulusan" },
-            { src: "images/foto_wisudah22.jpg", cat: "wisuda", title: "Hari kelulusan" },
 
-            // ---- Casual ----
-            { src: "images/casual1.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual2.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual3.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual4.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual5.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual6.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual7.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual8.jpg", cat: "casual", title: "Sesi casual" },
-            { src: "images/casual9.jpg", cat: "casual", title: "Sesi casual" },
+            // ---- Foto Sendiri (Solo) ----
+            { src: "image/sendiri1.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri2.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri3.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri4.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri5.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri6.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri7.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri8.jpg", cat: "sendiri", title: "Foto sendiri" },
+            { src: "image/sendiri9.jpg", cat: "sendiri", title: "Foto sendiri" },
 
-            // ---- Dokumentasi Kegiatan ----
-            { src: "images/dokumentasi1.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi2.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi3.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi4.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi5.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi6.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi7.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi8.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi9.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi10.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi11.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi12.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi13.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi14.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi15.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi16.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi17.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi18.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi19.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi20.jpg", cat: "dokumentasi", title: "Acara komunitas" },
-            { src: "images/dokumentasi21.jpg", cat: "dokumentasi", title: "Acara komunitas" },
+            // ---- Detail ----
+            { src: "image/detail1.jpg", cat: "detail", title: "Detail wisuda" },
+            { src: "image/detail2.jpg", cat: "detail", title: "Detail wisuda" },
+            { src: "image/detail3.jpg", cat: "detail", title: "Detail wisuda" },
         ];
 
-        /* --- 3) URUTAN & TEKS SECTION FOTO --- */
+        /* --- 4) URUTAN & TEKS SECTION FOTO --- */
         const PHOTO_SECTIONS = [
-            { key: "cosplay", label: "Cosplay", intro: "Karakter, ekspresi, dan detail kostum — dibangun frame demi frame." },
-            { key: "lamaran", label: "Lamaran", intro: "Momen intim dan emosional dari sebuah janji." },
-            { key: "wisuda", label: "Wisuda", intro: "Pencapaian dan kebanggaan di penghujung perjalanan." },
-            { key: "casual", label: "Casual", intro: "Natural, santai, buat personal branding tanpa dibuat-buat." },
-            { key: "dokumentasi", label: "Dokumentasi Kegiatan", nav: "Dokumentasi", intro: "Liputan acara & kegiatan — menangkap suasana secara menyeluruh." },
+            { key: "keluarga", label: "Foto Keluarga", intro: "Momen hangat bersama orang tua dan keluarga di hari kelulusan." },
+            { key: "berdua", label: "Foto Berdua", intro: "Sesi berdua dengan pasangan, sahabat, atau orang tersayang." },
+            { key: "sendiri", label: "Foto Sendiri", intro: "Potret solo kamu — dari yang cerah dan rapi sampai yang gelap dan dramatis." },
+            { key: "detail", label: "Detail", intro: "Detail toga, selempang, buket, dan aksesoris kelulusan." },
         ];
 
-        /* --- 4) VIDEO --- */
-        const VIDEOS = [
-            // (a) Sinematografi — short film / cinematic reels
-            { group: "sinematografi", type: "native", embedUrl: "vidio/cine1.mp4", thumbnail: "", title: "Cinematic Indoor", desc: "Deskripsi singkat cinematic reel." },
-            { group: "sinematografi", type: "native", embedUrl: "vidio/cine2.mp4", thumbnail: "", title: "Cinematic Outdoor", desc: "Deskripsi singkat cinematic reel." },
-
-            // (b) Video Profil Instansi
-            { group: "profil", type: "native", embedUrl: "vidio/profile1.mp4", thumbnail: "", title: "Video Profil — Institut Teknologi Adhi Tama Surabaya", desc: "Company/institution profile video." },
-            { group: "profil", type: "native", embedUrl: "vidio/profile2.mp4", thumbnail: "", title: "Video Profil — Balai Pengembangan Kompetensi PU Wilayah VI Surabaya", desc: "Company/institution profile video." },
+        /* --- 5) PAKET HARGA — edit nama, harga, durasi & isi paket di sini --- */
+        const PACKAGES = [
+            {
+                name: "Paket Standard",
+                price: "250.000",
+                duration: "± 60 menit sesi",
+                includes: [
+                    "semua file foto (soft file)",
+                    "15 foto edit (soft file)",
+                    "Semua kategori: keluarga, berdua, foto sendiri, detail",
+                    "Tersimpan di google drive / link download online 1 bulan",
+                ],
+                featured: true,
+                note: "Paling banyak dipilih",
+            },
+            {
+                name: "Paket Premium",
+                price: "350.000",
+                duration: "± 90 menit sesi",
+                includes: [
+                    "semua file foto (soft file)",
+                    "30 foto edit (soft file)",
+                    "Semua kategori: keluarga, berdua, foto sendiri, detail",
+                    "Tersimpan di google drive / link download online 1 bulan",
+                ],
+                featured: false,
+                note: "",
+            },
         ];
 
-        /* --- 5) SERTIFIKAT & PENGHARGAAN --- */
+        /* --- 7) SERTIFIKAT & PENGHARGAAN --- */
         const CERTS = [
             { image: "sertifikat/sertifikat1.jpg", title: "Juara 1 Creative Competition", event: "CIVIL DAYS 2026", year: "2026", achievement: "Juara 1" },
             { image: "sertifikat/sertifikat2.jpg", title: "Juara 1 Lomba Fotografi Nasional", event: "RAKERNAS INDOCEISS 2026", year: "2026", achievement: "Juara 1" },
             { image: "sertifikat/sertifikat3.jpg", title: "Juara 2 Lomba Short Movie Nasional", event: "RAKERNAS INDOCEISS 2026", year: "2026", achievement: "Juara 2" },
         ];
 
-        /* --- 6) KERJA SAMA / CLIENT LIST --- */
-        const PARTNERS = [
-            { logo: "partner/ITATS.jpg", name: "Institut Teknologi Adhi Tama" },
-            { logo: "partner/BAPEKOM6SBY.png", name: "Balai Pengembangan Kompetensi PU Wilayah VI Surabaya" },
-            { logo: "partner/PU.jpg", name: "Kementrian Pekerjaan Umum" },
-            { logo: "partner/imajirent.jpg", name: "Imajirent Surabaya" },
-            { logo: "partner/indoCEISS.png", name: "Indonesia Center for Environmental Sustainability Studies" },
-        ];
-
-        /* --- 7) PRELOADER --- */
+        /* --- 9) PRELOADER --- */
         (function preloadAssets() {
             const rootEl = document.documentElement;
             const preloaderEl = document.getElementById("preloader");
@@ -1354,7 +1572,6 @@
                 ...(PROFILE.photos || []).filter(Boolean),
                 ...PHOTOS.map(p => p.src),
                 ...CERTS.filter(c => c.image).map(c => c.image),
-                ...PARTNERS.filter(p => p.logo).map(p => p.logo),
             ];
 
             const total = assetUrls.length;
@@ -1426,20 +1643,35 @@
 
         const contentEl = document.getElementById("content");
         const navEl = document.getElementById("nav");
+        const adsSlot = document.getElementById("adsSlot");
         const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
         const pad2 = n => String(n).padStart(2, "0");
 
-        const N_VIDEO = PHOTO_SECTIONS.length + 1;
+        const N_PKG = PHOTO_SECTIONS.length + 1;
         const N_CERT = PHOTO_SECTIONS.length + 2;
-        const N_PARTNER = PHOTO_SECTIONS.length + 3;
+
+        /* ---------- ADS / PROMO BANNER ---------- */
+        (function renderAds() {
+            if (!ADS || !ADS.enabled) return;
+            const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`;
+            adsSlot.innerHTML = `
+                <div class="ads-banner">
+                    <div class="ads-txt">
+                        <span class="ads-label">${esc(ADS.label || "Promo")}</span>
+                        <h3>${esc(ADS.heading)}</h3>
+                        <p>${esc(ADS.text)}</p>
+                    </div>
+                    <a class="btn btn-solid" href="${waHref}" target="_blank" rel="noopener">${esc(ADS.ctaText || "Booking Sekarang")}</a>
+                </div>`;
+        })();
 
         /* ---------- NAV ---------- */
         const NAV = [
             { id: "profil", label: "Profil" },
+            { id: "kalender", label: "Kalender" },
             ...PHOTO_SECTIONS.map(s => ({ id: s.key, label: s.nav || s.label })),
-            { id: "video", label: "Video" },
+            { id: "paket", label: "Paket Harga" },
             { id: "sertifikat", label: "Sertifikat" },
-            { id: "kerjasama", label: "Kerja Sama" },
         ];
         NAV.forEach(n => {
             const a = document.createElement("a");
@@ -1524,77 +1756,196 @@
             contentEl.appendChild(el);
         })();
 
-        /* ---------- SECTION FOTO (termasuk Dokumentasi) ---------- */
-        PHOTO_SECTIONS.forEach((sec, i) => renderPhotoSection(sec, i + 1));
-
-        /* ---------- helper: preview/poster kartu video ---------- */
-        function ytId(url) {
-            const m = String(url).match(/(?:youtube\.com\/embed\/|youtu\.be\/|[?&]v=)([\w-]{11})/);
-            return m ? m[1] : "";
-        }
-        function videoPoster(v) {
-            if (v.thumbnail) return `<img src="${esc(v.thumbnail)}" alt="${esc(v.title)}" loading="lazy" />`;
-            if (v.type === "native" && v.embedUrl)
-                return `<video src="${esc(v.embedUrl)}#t=0.1" muted playsinline preload="metadata"></video>`;
-            if (v.type === "youtube" && v.embedUrl) {
-                const id = ytId(v.embedUrl);
-                if (id) return `<img src="https://img.youtube.com/vi/${id}/hqdefault.jpg" alt="${esc(v.title)}" loading="lazy" />`;
-            }
-            return `<span class="ph-text">Video segera hadir</span>`;
-        }
-
-        /* ---------- SECTION VIDEO ---------- */
-        (function renderVideos() {
+        /* ---------- SECTION KALENDER KETERSEDIAAN ---------- */
+        (function renderCalendar() {
             const el = document.createElement("section");
             el.className = "block";
-            el.id = "video";
+            el.id = "kalender";
+            el.innerHTML = `
+                <div class="sec-head">
+                    <span class="eyebrow">Jadwal</span>
+                    <h2>Kalender Ketersediaan</h2>
+                    <p>Cek tanggal yang masih kosong. Tanggal penuh bukan berarti nggak bisa sama sekali — klik tanggal untuk melihat jam yang masih kosong. Jangan lupa chat admin dulu buat konfirmasi.</p>
+                </div>
+                <div class="cal-wrap">
+                    <div class="cal-head">
+                        <div class="cal-nav">
+                            <button id="calPrev" aria-label="Bulan sebelumnya">‹</button>
+                            <button id="calNext" aria-label="Bulan berikutnya">›</button>
+                        </div>
+                        <h3 id="calTitle"></h3>
+                        <span style="width:32px"></span>
+                    </div>
+                    <div id="calBody"><div class="cal-loading">Memuat jadwal…</div></div>
+                    <div class="cal-legend">
+                        <span><span class="cal-swatch free"></span>Kosong</span>
+                        <span><span class="cal-swatch booked"></span>Sudah dibooking</span>
+                    </div>
+                </div>
+                <div class="cal-modal" id="calModal" aria-hidden="true">
+                    <div class="cal-modal-card">
+                        <button class="cal-modal-close" id="calModalClose" aria-label="Tutup">✕</button>
+                        <div id="calModalBody"></div>
+                    </div>
+                </div>`;
+            contentEl.appendChild(el);
 
-            const subs = [
-                { key: "sinematografi", label: "Sinematografi" },
-                { key: "profil", label: "Video Profil Instansi" },
-            ];
+            const DOW = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+            const MONTHS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const titleEl = el.querySelector("#calTitle");
+            const bodyEl = el.querySelector("#calBody");
+            const prevBtn = el.querySelector("#calPrev");
+            const nextBtn = el.querySelector("#calNext");
+            const modalEl = el.querySelector("#calModal");
+            const modalBodyEl = el.querySelector("#calModalBody");
+            const modalCloseEl = el.querySelector("#calModalClose");
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            let viewYear = today.getFullYear();
+            let viewMonth = today.getMonth();
+            let bookedDates = new Set();       // "yyyy-MM-dd"
+            let bookingsByDate = new Map();    // "yyyy-MM-dd" -> [{waktu, nama, kampus, paket}, ...]
+
+            function draw() {
+                titleEl.textContent = `${MONTHS[viewMonth]} ${viewYear}`;
+
+                const first = new Date(viewYear, viewMonth, 1);
+                const startDow = first.getDay();
+                const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+                let cells = DOW.map(d => `<div class="cal-dow">${d}</div>`).join("");
+                for (let i = 0; i < startDow; i++) cells += `<div class="cal-cell empty"></div>`;
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dateObj = new Date(viewYear, viewMonth, d);
+                    const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+                    const isPast = dateObj < today;
+                    const isToday = dateObj.getTime() === today.getTime();
+                    const isBooked = bookedDates.has(key);
+
+                    let cls = "cal-cell";
+                    if (isPast) cls += " past";
+                    else cls += isBooked ? " booked" : " free";
+                    if (isToday) cls += " today";
+                    if (isBooked) cls += " booked"; // tetap ditandai booked walau sudah lewat, biar tetap bisa diklik
+
+                    const dot = isBooked ? `<span class="cal-dot"></span>` : "";
+                    const count = isBooked ? bookingsByDate.get(key).length : 0;
+                    const title = isBooked ? ` title="${count} booking — klik untuk detail"` : "";
+                    cells += `<div class="${cls}"${title} data-key="${key}">${d}${dot}</div>`;
+                }
+                bodyEl.innerHTML = `<div class="cal-grid">${cells}</div>`;
+            }
+
+            function fmtTanggalPanjang(key) {
+                const [y, m, d] = key.split("-").map(Number);
+                const dt = new Date(y, m - 1, d);
+                return dt.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+            }
+
+            function openCalModal(key) {
+                const entries = bookingsByDate.get(key) || [];
+                if (!entries.length) return;
+                modalBodyEl.innerHTML = `
+                    <p class="cal-modal-date">${esc(fmtTanggalPanjang(key))}</p>
+                    ${entries.map(b => `
+                        <div class="cal-entry">
+                            <div class="cal-entry-row"><span class="lbl">Jam</span><span>${esc(b.waktu || "-")}</span></div>
+                            <div class="cal-entry-row"><span class="lbl">Kampus</span><span>${esc(b.kampus || "-")}</span></div>
+                            <div class="cal-entry-row"><span class="lbl">Nama</span><span>${esc(b.nama || "-")}</span></div>
+                            ${b.paket ? `<div class="cal-entry-row"><span class="lbl">Paket</span><span>${esc(b.paket)}</span></div>` : ""}
+                        </div>`).join("")}`;
+                modalEl.classList.add("open");
+                modalEl.setAttribute("aria-hidden", "false");
+            }
+            function closeCalModal() {
+                modalEl.classList.remove("open");
+                modalEl.setAttribute("aria-hidden", "true");
+            }
+
+            bodyEl.addEventListener("click", (e) => {
+                const cell = e.target.closest(".cal-cell.booked");
+                if (!cell) return;
+                openCalModal(cell.dataset.key);
+            });
+            modalCloseEl.addEventListener("click", closeCalModal);
+            modalEl.addEventListener("click", (e) => { if (e.target === modalEl) closeCalModal(); });
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && modalEl.classList.contains("open")) closeCalModal();
+            });
+
+            prevBtn.addEventListener("click", () => {
+                viewMonth--;
+                if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+                draw();
+            });
+            nextBtn.addEventListener("click", () => {
+                viewMonth++;
+                if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+                draw();
+            });
+
+            if (!CALENDAR_API_URL || CALENDAR_API_URL.includes("PASTE_URL")) {
+                bodyEl.innerHTML = `<div class="cal-error">Kalender belum terhubung ke jadwal.</div>`;
+                return;
+            }
+
+            fetch(CALENDAR_API_URL)
+                .then(r => r.json())
+                .then(data => {
+                    (data.bookings || []).forEach(b => {
+                        if (!b.tanggal) return;
+                        bookedDates.add(b.tanggal);
+                        if (!bookingsByDate.has(b.tanggal)) bookingsByDate.set(b.tanggal, []);
+                        bookingsByDate.get(b.tanggal).push(b);
+                    });
+                    draw();
+                })
+                .catch(() => {
+                    bodyEl.innerHTML = `<div class="cal-error">Gagal memuat jadwal. Coba refresh halaman.</div>`;
+                });
+        })();
+
+        /* ---------- SECTION FOTO (5 kategori wisuda) ---------- */
+        PHOTO_SECTIONS.forEach((sec, i) => renderPhotoSection(sec, i + 1));
+
+        /* ---------- SECTION PAKET HARGA ---------- */
+        (function renderPackages() {
+            const el = document.createElement("section");
+            el.className = "block";
+            el.id = "paket";
 
             let inner = `
                 <div class="sec-head">
-                    <span class="eyebrow">${pad2(N_VIDEO)} — Videografi</span>
-                    <h2>Videografi &amp; Sinematografi</h2>
-                    <p>Karya gerak — dari cinematic reel sampai video profil instansi.</p>
+                    <span class="eyebrow">${pad2(N_PKG)} — Harga</span>
+                    <h2>Paket Harga</h2>
+                    <p>Pilih paket sesuai kebutuhan sesi wisudamu. Semua harga bisa disesuaikan — chat dulu untuk konfirmasi jadwal.</p>
                 </div>`;
-
-            const playable = VIDEOS.filter(v => v.embedUrl);
-            const playableList = playable.map(v => ({ _type: "video", type: v.type, embedUrl: v.embedUrl, title: v.title, eyebrow: "Video" }));
-
-            subs.forEach(sub => {
-                const vids = VIDEOS.filter(v => v.group === sub.key);
-                inner += `<div class="sub-label">${esc(sub.label)}</div>`;
-                inner += vids.length
-                    ? `<div class="vgrid" data-sub="${sub.key}"></div>`
-                    : `<div class="empty-state"><span class="es-line"></span><p><b>${esc(sub.label)}</b> segera hadir.</p></div>`;
-            });
-
+            inner += PACKAGES.length
+                ? `<div class="pkgrid" id="pkgrid"></div>`
+                : `<div class="empty-state"><span class="es-line"></span><p>Daftar <b>paket harga</b> segera hadir.</p></div>`;
             el.innerHTML = inner;
             contentEl.appendChild(el);
 
-            subs.forEach(sub => {
-                const holder = el.querySelector(`.vgrid[data-sub="${sub.key}"]`);
-                if (!holder) return;
-                VIDEOS.filter(v => v.group === sub.key).forEach(v => {
-                    const isPh = !v.embedUrl;
-                    const card = document.createElement(isPh ? "div" : "button");
-                    card.className = "vcard" + (isPh ? " is-placeholder" : "");
-                    if (!isPh) card.type = "button";
-                    card.innerHTML = `
-                        <div class="vthumb">
-                            ${videoPoster(v)}
-                            ${isPh ? "" : `<span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>`}
-                        </div>
-                        <div class="vmeta"><h4>${esc(v.title)}</h4><p>${esc(v.desc)}</p></div>`;
-                    if (!isPh) {
-                        const pos = playable.indexOf(v);
-                        card.addEventListener("click", () => openLightbox(playableList, pos, "video"));
-                    }
-                    holder.appendChild(card);
-                });
+            const grid = el.querySelector("#pkgrid");
+            if (!grid) return;
+
+            PACKAGES.forEach(pkg => {
+                const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Uhygrapy! Aku mau booking " + pkg.name)}`;
+                const card = document.createElement("div");
+                card.className = "pkcard" + (pkg.featured ? " featured" : "");
+                card.innerHTML = `
+                    ${pkg.featured ? `<span class="pk-badge">Rekomendasi</span>` : ""}
+                    <div class="pk-name">${esc(pkg.name)}</div>
+                    <div class="pk-price">Rp${esc(pkg.price)}<span>/sesi</span></div>
+                    <div class="pk-dur">${esc(pkg.duration)}</div>
+                    <ul class="pk-list">
+                        ${pkg.includes.map(i => `<li>${esc(i)}</li>`).join("")}
+                    </ul>
+                    <a class="btn ${pkg.featured ? "btn-solid" : "btn-wa"} pk-cta" href="${waHref}" target="_blank" rel="noopener">Booking Paket Ini</a>
+                    ${pkg.note ? `<span class="pk-note">${esc(pkg.note)}</span>` : ""}`;
+                grid.appendChild(card);
             });
         })();
 
@@ -1644,38 +1995,6 @@
                     const pos = withImg.indexOf(c);
                     card.addEventListener("click", () => openLightbox(lbCerts, pos, "image"));
                 }
-                grid.appendChild(card);
-            });
-        })();
-
-        /* ---------- SECTION KERJA SAMA ---------- */
-        (function renderPartners() {
-            const el = document.createElement("section");
-            el.className = "block";
-            el.id = "kerjasama";
-
-            let inner = `
-                <div class="sec-head">
-                    <span class="eyebrow">${pad2(N_PARTNER)} — Kerja Sama</span>
-                    <h2>Pernah Dipercaya Oleh</h2>
-                    <p>Brand &amp; instansi yang pernah bekerja sama dengan Uhygrapy.</p>
-                </div>`;
-            inner += PARTNERS.length
-                ? `<div class="pgrid" id="pgrid"></div>`
-                : `<div class="empty-state"><span class="es-line"></span><p>Daftar <b>kerja sama</b> segera hadir.</p></div>`;
-            el.innerHTML = inner;
-            contentEl.appendChild(el);
-
-            const grid = el.querySelector("#pgrid");
-            if (!grid) return;
-            PARTNERS.forEach(p => {
-                const hasLogo = !!p.logo;
-                const card = document.createElement("div");
-                card.className = "pcard";
-                const bgStyle = p.bg ? ` style="background:${esc(p.bg)}"` : "";
-                card.innerHTML = hasLogo
-                    ? `<div class="plogo"${bgStyle}><img src="${esc(p.logo)}" alt="${esc(p.name)}" loading="lazy" /></div>`
-                    : `<div class="plogo placeholder"><span>${esc(p.name)}</span></div>`;
                 grid.appendChild(card);
             });
         })();
