@@ -16,11 +16,6 @@
         rel="stylesheet" />
 
     <style>
-        /* =====================================================================
-           TEMA WARNA — OPSI C (Biru–Vanila) AKTIF
-           Semua warna lewat variabel di :root ini. Ganti tema cukup di sini,
-           HTML & JS TIDAK perlu disentuh.
-           ===================================================================== */
         :root {
             --bg: #0a0a0a;
             --bg-soft: #161616;
@@ -474,36 +469,18 @@
 
         /* ============ MASONRY (foto) ============ */
         .grid {
-            column-count: 4;
-            column-gap: 22px;
-        }
-
-        @media (max-width:1200px) {
-            .grid {
-                column-count: 3;
-            }
-        }
-
-        @media (max-width:780px) {
-            .grid {
-                column-count: 2;
-            }
-        }
-
-        @media (max-width:460px) {
-            .grid {
-                column-count: 1;
-            }
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
         }
 
         figure.card {
-            margin: 0 0 22px;
-            break-inside: avoid;
+            margin: 0;
+            width: 100%;
             position: relative;
             border-radius: var(--radius);
             overflow: hidden;
             background: var(--bg-soft);
-            cursor: zoom-in;
             opacity: 0;
             transition: opacity .6s ease;
         }
@@ -516,29 +493,6 @@
             width: 100%;
             height: auto;
             display: block;
-            transition: transform .55s ease;
-        }
-
-        figure.card:hover img {
-            transform: scale(1.03);
-        }
-
-        figure.card figcaption {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            padding: 34px 16px 15px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, .72));
-            opacity: 0;
-            transform: translateY(6px);
-            transition: opacity .3s, transform .3s;
-            font-size: 13px;
-        }
-
-        figure.card:hover figcaption {
-            opacity: 1;
-            transform: none;
         }
 
         figcaption .cat {
@@ -580,111 +534,119 @@
             font-weight: 600;
         }
 
-        /* ============ PAKET HARGA (pricing) ============ */
+        /* ============ PAKET HARGA (pricing — minimalis, gaya editorial) ============ */
         .pkgrid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0;
+            border-top: 1px solid var(--line);
         }
 
         .pkcard {
             position: relative;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            padding: 28px 24px;
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            background: var(--bg-soft);
-            transition: border-color .2s ease, transform .2s ease;
+            gap: 16px;
+            padding: 40px 36px;
+            border-bottom: 1px solid var(--line);
         }
 
-        .pkcard:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-dim);
-        }
-
-        .pkcard.featured {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 1px var(--accent);
+        .pkgrid .pkcard:not(:last-child) {
+            border-right: 1px solid var(--line);
         }
 
         .pk-badge {
-            position: absolute;
-            top: -12px;
-            right: 20px;
-            background: var(--accent);
-            color: #fff;
             font-size: 10px;
-            letter-spacing: .14em;
+            letter-spacing: .24em;
             text-transform: uppercase;
-            padding: 5px 12px;
-            border-radius: 999px;
+            color: var(--accent);
             font-weight: 600;
         }
 
         .pk-name {
             font-family: "Space Grotesk", sans-serif;
-            font-size: 18px;
+            font-size: clamp(26px, 3vw, 34px);
             font-weight: 600;
+            letter-spacing: -.01em;
+            font-style: italic;
+        }
+
+        .pk-price-label {
+            margin-top: 6px;
+            font-size: 10.5px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--muted);
         }
 
         .pk-price {
             font-family: "Space Grotesk", sans-serif;
-            font-size: 28px;
+            font-size: clamp(32px, 4vw, 44px);
             font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
+            color: var(--text);
+            line-height: 1.1;
         }
 
         .pk-price span {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--muted);
             font-weight: 500;
-            margin-left: 4px;
+            margin-left: 6px;
         }
 
         .pk-dur {
-            font-size: 12.5px;
+            font-size: 13px;
             color: var(--muted);
         }
 
         .pk-list {
             list-style: none;
-            margin: 6px 0 0;
+            margin: 10px 0 0;
             padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 9px;
             flex: 1;
         }
 
         .pk-list li {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text);
-            display: flex;
-            gap: 8px;
-            align-items: flex-start;
+            padding: 11px 0;
+            border-top: 1px solid var(--line);
             line-height: 1.5;
         }
 
-        .pk-list li::before {
-            content: "✓";
-            color: var(--accent);
-            font-weight: 700;
-            flex: none;
+        .pk-list li:last-child {
+            border-bottom: 1px solid var(--line);
         }
 
         .pk-cta {
-            margin-top: 8px;
-            justify-content: center;
-            width: 100%;
+            align-self: flex-start;
+            margin-top: 20px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid var(--text);
+            padding: 0 0 2px;
+            font-size: 13px;
+        }
+
+        .pk-cta:hover {
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
         .pk-note {
-            margin-top: 4px;
-            font-size: 12px;
+            margin-top: -8px;
+            font-size: 11.5px;
+            font-style: italic;
             color: var(--muted);
+        }
+
+        @media (max-width: 640px) {
+            .pkgrid .pkcard:not(:last-child) {
+                border-right: none;
+            }
         }
 
         /* ============ SERTIFIKAT ============ */
@@ -1364,50 +1326,21 @@
             ctaText: "Chat & Booking",
         };
 
-        /* --- 3) FOTO (5 kategori wisuda) --- */
+        /* --- 3) FOTO ---
+           5 foto yang kamu upload, ditampilkan jadi satu galeri aja (tanpa kategori).
+           Tinggal tambah baris baru di sini kalau mau nambah foto lagi.
+        */
         const PHOTOS = [
-            // ---- Foto Keluarga ----
-            { src: "image/keluarga1.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga2.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga3.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga4.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga5.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga6.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga7.jpg", cat: "keluarga", title: "Bersama keluarga" },
-            { src: "image/keluarga8.jpg", cat: "keluarga", title: "Bersama keluarga" },
-
-            // ---- Foto Berdua ----
-            { src: "image/ber21.jpg", cat: "berdua", title: "Foto berdua" },
-            { src: "image/ber22.jpg", cat: "berdua", title: "Foto berdua" },
-            { src: "image/ber23.jpg", cat: "berdua", title: "Foto berdua" },
-            { src: "image/ber24.jpg", cat: "berdua", title: "Foto berdua" },
-            { src: "image/ber25.jpg", cat: "berdua", title: "Foto berdua" },
-            { src: "image/ber26.jpg", cat: "berdua", title: "Foto berdua" },
-
-
-            // ---- Foto Sendiri (Solo) ----
-            { src: "image/sendiri1.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri2.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri3.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri4.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri5.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri6.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri7.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri8.jpg", cat: "sendiri", title: "Foto sendiri" },
-            { src: "image/sendiri9.jpg", cat: "sendiri", title: "Foto sendiri" },
-
-            // ---- Detail ----
-            { src: "image/detail1.jpg", cat: "detail", title: "Detail wisuda" },
-            { src: "image/detail2.jpg", cat: "detail", title: "Detail wisuda" },
-            { src: "image/detail3.jpg", cat: "detail", title: "Detail wisuda" },
+            { src: "image/sendiri1.jpg", cat: "foto", title: "Foto Wisuda" },
+            { src: "image/sendiri2.jpg", cat: "foto", title: "Foto Wisuda" },
+            { src: "image/sendiri3.jpg", cat: "foto", title: "Foto Wisuda" },
+            { src: "image/sendiri4.jpg", cat: "foto", title: "Foto Wisuda" },
+            { src: "image/sendiri5.jpg", cat: "foto", title: "Foto Wisuda" },
         ];
 
         /* --- 4) URUTAN & TEKS SECTION FOTO --- */
         const PHOTO_SECTIONS = [
-            { key: "keluarga", label: "Foto Keluarga", intro: "Momen hangat bersama orang tua dan keluarga di hari kelulusan." },
-            { key: "berdua", label: "Foto Berdua", intro: "Sesi berdua dengan pasangan, sahabat, atau orang tersayang." },
-            { key: "sendiri", label: "Foto Sendiri", intro: "Potret solo kamu — dari yang cerah dan rapi sampai yang gelap dan dramatis." },
-            { key: "detail", label: "Detail", intro: "Detail toga, selempang, buket, dan aksesoris kelulusan." },
+            { key: "foto", label: "Galeri Foto", intro: "Hasil foto sesi wisuda." },
         ];
 
         /* --- 5) PAKET HARGA — edit nama, harga, durasi & isi paket di sini --- */
@@ -1568,17 +1501,13 @@
             navEl.appendChild(a);
         });
 
-        /* ---------- helper: bikin grid foto + list lightbox ---------- */
+        /* ---------- helper: bikin grid foto (tanpa klik/lightbox) ---------- */
         function buildPhotoGrid(gridEl, items, label) {
-            const lbItems = items.map(p => ({ _type: "image", src: p.src, eyebrow: label, title: p.title }));
             items.forEach((p, idx) => {
                 const fig = document.createElement("figure");
                 fig.className = "card";
                 fig.style.transitionDelay = ((idx % 8) * 0.05) + "s";
-                fig.innerHTML = `
-                    <img src="${esc(p.src)}" alt="${esc(p.title)} — ${esc(label)}" loading="lazy" />
-                    <figcaption><span class="cat">${esc(label)}</span><br>${esc(p.title)}</figcaption>`;
-                fig.addEventListener("click", () => openLightbox(lbItems, idx, "image"));
+                fig.innerHTML = `<img src="${esc(p.src)}" alt="${esc(p.title)}" loading="lazy" />`;
                 gridEl.appendChild(fig);
             });
         }
@@ -1787,12 +1716,13 @@
                 card.innerHTML = `
                     ${pkg.featured ? `<span class="pk-badge">Rekomendasi</span>` : ""}
                     <div class="pk-name">${esc(pkg.name)}</div>
-                    <div class="pk-price">Rp${esc(pkg.price)}<span>/sesi</span></div>
                     <div class="pk-dur">${esc(pkg.duration)}</div>
                     <ul class="pk-list">
                         ${pkg.includes.map(i => `<li>${esc(i)}</li>`).join("")}
                     </ul>
-                    <a class="btn ${pkg.featured ? "btn-solid" : "btn-wa"} pk-cta" href="${waHref}" target="_blank" rel="noopener">Booking Paket Ini</a>
+                    <div class="pk-price-label">Price</div>
+                    <div class="pk-price">Rp${esc(pkg.price)}<span>/sesi</span></div>
+                    <a class="btn pk-cta" href="${waHref}" target="_blank" rel="noopener">Booking Paket Ini →</a>
                     ${pkg.note ? `<span class="pk-note">${esc(pkg.note)}</span>` : ""}`;
                 grid.appendChild(card);
             });
