@@ -549,10 +549,11 @@
             gap: 16px;
             padding: 40px 36px;
             border-bottom: 1px solid var(--line);
+            border-right: 1px solid var(--line);
         }
 
-        .pkgrid .pkcard:not(:last-child) {
-            border-right: 1px solid var(--line);
+        .pkgrid .pkcard:last-child {
+            border-right: none;
         }
 
         .pk-badge {
@@ -644,7 +645,7 @@
         }
 
         @media (max-width: 640px) {
-            .pkgrid .pkcard:not(:last-child) {
+            .pkgrid .pkcard {
                 border-right: none;
             }
         }
@@ -1343,8 +1344,26 @@
             { key: "foto", label: "Galeri Foto", intro: "Hasil foto sesi wisuda." },
         ];
 
-        /* --- 5) PAKET HARGA — edit nama, harga, durasi & isi paket di sini --- */
+        /* --- 5) PAKET HARGA — edit nama, harga, durasi & isi paket di sini ---
+           Field opsional per item:
+             unit : satuan harga (default "sesi")
+             cta  : teks tombol (default "Booking Paket Ini →")
+             verb : kata di pesan WhatsApp (default "booking")
+        */
         const PACKAGES = [
+            {
+                name: "Paket Mini",
+                price: "150.000",
+                duration: "± 30 menit sesi",
+                includes: [
+                    "semua file foto (soft file)",
+                    "5 foto edit (soft file)",
+                    "Foto sendiri, berdua, atau keluarga",
+                    "Tersimpan di google drive / link download online 1 bulan",
+                ],
+                featured: false,
+                note: "Cocok untuk sesi singkat",
+            },
             {
                 name: "Paket Standard",
                 price: "250.000",
@@ -1370,6 +1389,21 @@
                 ],
                 featured: false,
                 note: "",
+            },
+            {
+                name: "Jasa Edit Foto",
+                price: "5.000",
+                unit: "foto",
+                cta: "Pesan Jasa Edit →",
+                verb: "pesan",
+                duration: "Add-on / bisa tanpa sesi foto",
+                includes: [
+                    "Retouch & color grading per foto",
+                    "Hasil dalam bentuk soft file",
+                    "Bisa untuk foto dari paket lain atau foto sendiri",
+                ],
+                featured: false,
+                note: "Harga per 1 foto",
             },
         ];
 
@@ -1685,7 +1719,7 @@
                 });
         })();
 
-        /* ---------- SECTION FOTO (5 kategori wisuda) ---------- */
+        /* ---------- SECTION FOTO ---------- */
         PHOTO_SECTIONS.forEach((sec, i) => renderPhotoSection(sec, i + 1));
 
         /* ---------- SECTION PAKET HARGA ---------- */
@@ -1710,7 +1744,7 @@
             if (!grid) return;
 
             PACKAGES.forEach(pkg => {
-                const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Uhygrapy! Aku mau booking " + pkg.name)}`;
+                const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Uhygrapy! Aku mau " + (pkg.verb || "booking") + " " + pkg.name)}`;
                 const card = document.createElement("div");
                 card.className = "pkcard" + (pkg.featured ? " featured" : "");
                 card.innerHTML = `
@@ -1721,8 +1755,8 @@
                         ${pkg.includes.map(i => `<li>${esc(i)}</li>`).join("")}
                     </ul>
                     <div class="pk-price-label">Price</div>
-                    <div class="pk-price">Rp${esc(pkg.price)}<span>/sesi</span></div>
-                    <a class="btn pk-cta" href="${waHref}" target="_blank" rel="noopener">Booking Paket Ini →</a>
+                    <div class="pk-price">Rp${esc(pkg.price)}<span>/${esc(pkg.unit || "sesi")}</span></div>
+                    <a class="btn pk-cta" href="${waHref}" target="_blank" rel="noopener">${esc(pkg.cta || "Booking Paket Ini →")}</a>
                     ${pkg.note ? `<span class="pk-note">${esc(pkg.note)}</span>` : ""}`;
                 grid.appendChild(card);
             });
